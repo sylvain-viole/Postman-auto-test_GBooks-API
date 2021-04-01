@@ -11,4 +11,4 @@
 ## How to :
 
 ## Test Plan :
-you can find more info on the TEST STRATEGY on [test-plan.md](https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests/new/main/test-plan.md)
+you can find more info on the TEST STRATEGY on [test-plan.md](https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests/blob/main/test-plan.md)
