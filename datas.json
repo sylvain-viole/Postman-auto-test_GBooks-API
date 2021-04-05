@@ -40,6 +40,18 @@
         "maxResults" : "20"
     },
     {
+        "scenario": "S004",
+        "testCase": "C001",
+        "qData": "arcachon",
+        "maxResults" : "40"
+    },
+    {
+        "scenario": "S004",
+        "testCase": "C002",
+        "qData": "arcachon",
+        "maxResults" : "0"
+    },
+    {
         "scenario": "S005",
         "testCase": "C001",
         "qData": "arcachon",
@@ -74,7 +86,7 @@
         "testCase": "C001",
         "qData": "arcachon",
         "parameter" : "orderBy",
-        "value" : "wrong value",
+        "value" : "xxx",
         "expected" : 
         {
             "msgPart" : "order_by"
@@ -85,7 +97,7 @@
         "testCase": "C001",
         "qData": "arcachon",
         "parameter" : "maxResults",
-        "value" : "wrong value",
+        "value" : "xxx",
         "expected" : 
         {
             "msgPart" : "max_results"
@@ -96,7 +108,7 @@
         "testCase": "C001",
         "qData": "arcachon",
         "parameter" : "startIndex",
-        "value" : "wrong value",
+        "value" : "xxx",
         "expected" : 
         {
             "msgPart" : "start_index"
@@ -130,6 +142,25 @@
         "scenario": "S189",
         "testCase": "C001",
         "bookId": "wrongId"
+    },
+    {
+        "scenario": "S201a",
+        "qScope": "inauthor",
+        "qData": "Céline Minard",
+        "maxResults": "5",
+        "lang": "fr",
+        "orderBy": "newest",
+        "expected": 
+        {
+            "author": "minard"
+        }
+    },
+    {
+        "scenario": "S201b",
+        "expected": 
+        {
+            "title": "Bacchantes"
+        }
     }
     
 ]

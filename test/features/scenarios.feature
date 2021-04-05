@@ -69,11 +69,14 @@
         When I request the service for books with valid endpoint
         And my parameters are NOT valid
         Then I should get a 400 response with error msg containing mention of invalid parameter
+            [C001] Response is not valid and has error value containing the invalid parameter name
+            [C002] Response is not valid and has error value containing the invalid parameter name
 
     
     Scenario: [101] Valid request for book by id critical check
         Given the client
         When I request the service for book by id with valid endpoint
+        And The id is valid
         Then I should get a valid response
             [C001] Response has "200" status code
             [C002] Response has headers with content-type "JSON"
@@ -95,10 +98,10 @@
             [C004] Response "previewLink" parameter contains an url string,
             [C004] Request to "previewLink" url returns a "200" code,
             [C004] Request to "previewLink" url returns a "html" page
-            [C004] Response has "infoLink" parameter
-            [C004] Response "infoLink" parameter contains an url string,
-            [C004] Request to "infoLink" url returns a "200" code,
-            [C004] Request to "infoLink" url returns a "html" page
+            [C005] Response has "infoLink" parameter
+            [C005] Response "infoLink" parameter contains an url string,
+            [C005] Request to "infoLink" url returns a "200" code,
+            [C005] Request to "infoLink" url returns a "html" page
             
     Scenario: [189] Request for book with invalid id
         Given the client
@@ -111,9 +114,39 @@
         Given the client
         When I request the service for a book search
         Then I should get a list of books
+            [C001] Response has "200" status code
+            [C002] Response has headers with content-type "JSON"
+            [C003] Response is an object,
+            [C003] Response has "kind" property with value "books#volumes",
+            [C003] Response has "totalItems" property with value above 0,
+            [C004] Response has "items" property which is an array and a <= "maxResults",
+            [C005] Each item of response has an "id",
+            [C006] Each item of response has a "language" property,
+            [C007] Each item of response has an "author" property which is an array,
+            [C008] Items are sorted by publication date
+
 
     Scenario: [201b] Full search part 2/2
         Given the client
         And the result of part 1/2 request
         When I request the service for one book
         Then I should get informations on that book
+            [C001] Response has "200" status code
+            [C002] Response has headers with content-type "JSON"
+            [C003] Response is an object,
+            [C003] Response has "kind" property with value "books#volumes",
+            [C003] Response has "volumeInfo" property which is an object
+            [C004] Response "id" matched request "id"
+            [C005] Response "title" is as expected
+            [C006] Response has "thumbnail" parameter in "imageLinks"
+            [C006] Response "tumbnail" parameter contains an url string,
+            [C006] Request to "thumbnail" url returns a "200" code,
+            [C006] Request to "thumbnail" url returns an "image"
+            [C007] Response has "previewLink" parameter
+            [C007] Response "previewLink" parameter contains an url string,
+            [C007] Request to "previewLink" url returns a "200" code,
+            [C007] Request to "previewLink" url returns a "html" page
+            [C008] Response has "infoLink" parameter
+            [C008] Response "infoLink" parameter contains an url string,
+            [C008] Request to "infoLink" url returns a "200" code,
+            [C008] Request to "infoLink" url returns a "html" page
