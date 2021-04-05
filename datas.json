@@ -1,0 +1,135 @@
+[
+    {
+        "scenario": "S001",
+        "testCase": "C001",
+        "qData": "arcachon"
+    },
+    {
+        "scenario": "S002",
+        "testCase": "C001",
+        "qScope": "intitle",
+        "qData": "arcachon"
+    },
+    {
+        "scenario": "S002",
+        "testCase": "C002",
+        "qScope": "inauthor",
+        "qData": "arcachon"
+    },    {
+        "scenario": "S002",
+        "testCase": "C003",
+        "qScope": "isbn",
+        "qData": "9781428925168"
+    },
+    {
+        "scenario": "S003",
+        "testCase": "C001",
+        "qData": "balloon",
+        "orderBy" : "relevance"
+    },
+    {
+        "scenario": "S003",
+        "testCase": "C002",
+        "qData": "balloon",
+        "orderBy" : "newest"
+    },
+    {
+        "scenario": "S004",
+        "testCase": "C001",
+        "qData": "arcachon",
+        "maxResults" : "20"
+    },
+    {
+        "scenario": "S005",
+        "testCase": "C001",
+        "qData": "arcachon",
+        "startIndex" : "1"
+    },
+    {
+        "scenario": "S006",
+        "testCase": "C001",
+        "qData": "arcachon",
+        "startIndex" : "1000000"
+    },
+    {
+        "scenario": "S007",
+        "testCase": "C001",
+        "qData": "monsieur",
+        "langRestrict" : "fr"
+    },
+    {
+        "scenario": "S007",
+        "testCase": "C001",
+        "qData": "mister",
+        "langRestrict" : "en"
+    },
+    {
+        "scenario": "S007",
+        "testCase": "C001",
+        "qData": "da",
+        "langRestrict" : "no"
+    },
+    {
+        "scenario": "S089",
+        "testCase": "C001",
+        "qData": "arcachon",
+        "parameter" : "orderBy",
+        "value" : "wrong value",
+        "expected" : 
+        {
+            "msgPart" : "order_by"
+        }
+    },
+    {
+        "scenario": "S089",
+        "testCase": "C001",
+        "qData": "arcachon",
+        "parameter" : "maxResults",
+        "value" : "wrong value",
+        "expected" : 
+        {
+            "msgPart" : "max_results"
+        }
+    },
+    {
+        "scenario": "S089",
+        "testCase": "C001",
+        "qData": "arcachon",
+        "parameter" : "startIndex",
+        "value" : "wrong value",
+        "expected" : 
+        {
+            "msgPart" : "start_index"
+        }
+    },
+    {
+        "scenario": "S101",
+        "bookId": "B3hOv6y9_dcC",
+        "expected": 
+        {
+            "title": "Akim-foo"
+        }
+    },
+    {
+        "scenario": "S102",
+        "bookId": "B3hOv6y9_dcC",
+        "expected": 
+        {
+            "title": "Akim-foo"
+        }
+    },
+    {
+        "scenario": "S102",
+        "bookId": "92_C6N0Kq_oC",
+        "expected": 
+        {
+            "title": "Notre-Dame d'Arcachon"
+        }
+    },
+    {
+        "scenario": "S189",
+        "testCase": "C001",
+        "bookId": "wrongId"
+    }
+    
+]
