@@ -3,3 +3,4 @@ newman run Google\ Books\ Api\ Test.postman_collection.json -d datas.json -r htm
 git status
 git add newman/
 git commit -m "Test Result on $(date)"
+git push origin main
