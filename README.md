@@ -18,6 +18,8 @@
 
 - check html file created in the ```newman``` subdirectory
 
+- If you forked and linked this repo to your local folder you can use ```bash launchTest.sh``` to automaticaly generate and push the report to your GH repo.
+
 ## Documentation:
 - You can find more info on the TEST STRATEGY on [test-plan.md](https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests/blob/main/test-plan.md).
 - All tests scenarios and cases are described in the COLLECTION documentation.
