@@ -9,11 +9,12 @@
 ## How to :
 - install [newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/)
 - install [htmlextra reporter](https://github.com/DannyDainton/newman-reporter-htmlextra)
-- request for oauth by contacting me via github
+- request for oauth and env variables by contacting me via github
 - Download datas.json file to your local folder
+- Place the env variable JSON file into your local folder
 - run the following command line from your local folder :
 
-```newman run https://www.getpostman.com/collections/d17eab280931854df69a -d datas.json -r htmlextra --reporter-htmlextra-title "Google Books Api Testing Report"```
+```newman run https://www.getpostman.com/collections/d17eab280931854df69a -d datas.json -e TEST.postman_environment.json -r htmlextra --reporter-htmlextra-title "Google Books Api Testing Report"```
 
 - check html file created in the ```newman``` subdirectory
 
