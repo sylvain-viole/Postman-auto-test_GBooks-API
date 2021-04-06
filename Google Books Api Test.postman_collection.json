@@ -16,6 +16,11 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
+									"let token = pm.environment.get('dynamic_token');\r",
+									"token = 'newModifiedToken90332'; // Perform some operations here.. \r",
+									"\r",
+									"pm.environment.set('dynamic_token', token);\r",
+									"\r",
 									"switch (data.scenario) {\r",
 									"    case \"S001\":\r",
 									"        postman.setNextRequest('[S001] Critical Tests');\r",
@@ -2290,147 +2295,6 @@
 					}
 				}
 			]
-		},
-		{
-			"name": "sandbox",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"[S201bC001] response has 200 status\",() => {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"[S201bC002] Content-Type is present and is JSON\",() => {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"    pm.response.to.be.json;",
-							"});",
-							"",
-							"const response = pm.response.json()",
-							"",
-							"pm.test(`[S201bC003] Response object has all expected properties`,() => {",
-							"    pm.expect(response).to.be.an('object')",
-							"    pm.expect(response).to.have.property('kind');",
-							"    pm.expect(response.kind).to.eql('books#volume');",
-							"    pm.expect(response).to.have.property('volumeInfo');",
-							"    pm.expect(response.volumeInfo).to.be.an('object')",
-							"});",
-							"",
-							"pm.test(\"[S201bC004] Response id matches request id\",() => {",
-							"    pm.expect(pm.response.json().id).to.eql(variables.get('bookId'))",
-							"});",
-							"",
-							"pm.test(`[S201bC005] Response title matches`,() => {",
-							"    pm.expect(pm.response.json().volumeInfo.title).to.eql('Bacchantes')",
-							"});",
-							"",
-							"pm.test(\"[S201bC006] Response image link is valid and pointing to an image\",() => {",
-							"    pm.expect(pm.response.json().volumeInfo).to.have.property('imageLinks');",
-							"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');",
-							"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;",
-							"    pm.expect(imageUrl).to.be.a('string');",
-							"    pm.expect(imageUrl).includes('http');",
-							"    if(imageUrl) {",
-							"        pm.sendRequest(imageUrl, (error, response) => {",
-							"            console.log(error ? error : \"image request ok\")",
-							"            pm.expect(response.code).to.eql(200);",
-							"            pm.expect(response.headers.get('Content-Type')).includes('image')",
-							"        })",
-							"    }",
-							"});",
-							"",
-							"pm.test(\"[S201bC007] Response preview link is valid and pointing to an html page\",() => {",
-							"    pm.expect(pm.response.json().volumeInfo).to.have.property('previewLink');",
-							"    const previewUrl = pm.response.json().volumeInfo.previewLink;",
-							"    pm.expect(previewUrl).to.be.a('string');",
-							"    pm.expect(previewUrl).includes('http');",
-							"    if(previewUrl) {",
-							"        pm.sendRequest(previewUrl, (error, response) => {",
-							"            console.log(error ? error : \"link request ok\")",
-							"            pm.expect(response.code).to.eql(200);",
-							"            pm.expect(response.headers.get('Content-Type')).includes('html')",
-							"        })",
-							"    }",
-							"});",
-							"",
-							"pm.test(\"[S201bC008] Response info link is valid and pointing to an html page\",() => {",
-							"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');",
-							"    const infoUrl = pm.response.json().volumeInfo.infoLink;",
-							"    pm.expect(infoUrl).to.be.a('string');",
-							"    pm.expect(infoUrl).includes('http');",
-							"    if(infoUrl) {",
-							"        pm.sendRequest(infoUrl, (error, response) => {",
-							"            console.log(error ? error : \"link request ok\")",
-							"            pm.expect(response.code).to.eql(200);",
-							"            pm.expect(response.headers.get('Content-Type')).includes('html')",
-							"        })",
-							"    }",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"auth": {
-					"type": "oauth2",
-					"oauth2": [
-						{
-							"key": "tokenType",
-							"value": "Bearer",
-							"type": "string"
-						},
-						{
-							"key": "accessToken",
-							"value": "ya29.a0AfH6SMBRyDOijyvy15oYZJBk4g6PvhsGvFHmmslJaFU2XPjL63waWprK_2bZMYS8Owr6AYBfd9yFloVAO9zLjXaLM0p-XC1Rts-rVdr7lwJT-tvP9wfNu9fOLw_1A5uROTg1JcldsbTQGret_tfkomsz5JJY6A",
-							"type": "string"
-						},
-						{
-							"key": "addTokenTo",
-							"value": "header",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "Content-Length",
-						"value": "CONTENT_LENGTH",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"url": {
-					"raw": "{{endpoint}}/mylibrary/bookshelves/1001/92_C6N0Kq_oC?key={{apiKey}}",
-					"host": [
-						"{{endpoint}}"
-					],
-					"path": [
-						"mylibrary",
-						"bookshelves",
-						"1001",
-						"92_C6N0Kq_oC"
-					],
-					"query": [
-						{
-							"key": "key",
-							"value": "{{apiKey}}"
-						}
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"auth": {
@@ -2443,7 +2307,7 @@
 			},
 			{
 				"key": "accessToken",
-				"value": "ya29.a0AfH6SMCkqF1NKwqLgFLYvYFv7Qg-pLkT-a6QalCSD64guLlYE4B_f-yjOnx9CHL2UxiM6xe387izaz1Gs9JvwlD9VDs7VFUWPvBK4K3DaWXJasdhk9f-EaHzSoh7zPWx9MUT7_jlYvw3ol996W2DiNDynZjS5Q",
+				"value": "{{dynamicToken}}",
 				"type": "string"
 			},
 			{
