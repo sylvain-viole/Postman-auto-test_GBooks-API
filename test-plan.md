@@ -38,7 +38,7 @@ The product being tested is the GOOGLE BOOKS API in order to ensure integration/
 ## Schedule / Reporting / Risks :
 **Schedule** : test suite to be launched prior to each iteration of the web service deployment
 
-**Reporting** : HTML report will be logged for each execution of the test suite. Report will be saved locally on the machine that executed the scripts.
+**Reporting** : HTML report will be created for each execution of the test suite. Report will be saved locally on the machine that executed the scripts, and may be pushed on a GH repo with ```launchTest.sh```.
 
 **Risks** : Considering the fact that we are testing an external API, changes or discontinuation of service may cause large production delays.
 ***
