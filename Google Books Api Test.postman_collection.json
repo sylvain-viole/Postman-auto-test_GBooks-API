@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "210b9cc8-0892-4ef3-829c-dc196ee46a64",
 		"name": "Google Books Api Test",
+		"description": "## This collection challenges Google Books API ##\n\nComplete documentation of the API can be found [here](https://developers.google.com/books/docs/overview)\n\nThe API introduces 2 entities :\n- VOLUMES\n- BOOKSHELVES\n\nThis automated test collection challenges both of them.\n\n### Collection structure ###\nCollection is separated in 2 parts :\n- **INTEGRATION TESTS :**\nChallenges atomic fonctionalities\n- **REGRESSION TESTS :**\nChallenges global use case scenario\n\n#### Test naming : ####\n- Each test is referred as ```[SxxxCyyy] <description>```\n    - ```Sxxx``` : is the id of the scenario from 0 to 999,\n    - ```Cyyy``` : is the id of the test Case from 0 to 999,\n    - ```<description>``` : exposes what the test case challenges and expects\n    - example : ```[S101C002] Response object has all expected properties```\n\n- Test scenarios (gherkin) and cases details are exposed in each request documentation\n- Client consuming the API is referred to as ```client```\n- Google books API is referred to as ```service```\n\n#### Datas : ####\n- This collection uses an external data file.\n\n#### Auth : ####\n- For ```Volumes``` requests don't use Auth or apiKey \n- **For ```bookshelf``` resquests, we use an oAuth 2.0 + API KEY**\n\n\n#### Routing : ####\nDispatch between data iteration requests, and tests cases works as follows :\n- ```Routing Req``` sets next request depending on the ```data.scenario``` value\n- ```switch``` statement on ```data.testCase``` in the test script of each request routes the iteration to its corresponding test case.\n- Each request after completion and tests throws back to the routing Req.\n\n***\n***",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -46,8 +47,38 @@
 									"    case \"S102\":\r",
 									"        postman.setNextRequest('[S102] Check content');\r",
 									"        break;\r",
-									"    case \"S189\":\r",
-									"        postman.setNextRequest('[S189] Wrong ID');\r",
+									"    case \"S201\":\r",
+									"        postman.setNextRequest('[S201] Critical Tests');\r",
+									"        break;\r",
+									"    case \"S202\":\r",
+									"        postman.setNextRequest('[S202] Get Bookshelf id');\r",
+									"        break;\r",
+									"    case \"S203\":\r",
+									"        postman.setNextRequest('[S203] Add book to public bookshelf');\r",
+									"        break;\r",
+									"    case \"S204\":\r",
+									"        postman.setNextRequest('[S204] Remove book from bookshelf');\r",
+									"        break;\r",
+									"    case \"S289\":\r",
+									"        postman.setNextRequest('[S289] Wrong Auth');\r",
+									"        break;\r",
+									"    case \"S290\":\r",
+									"        postman.setNextRequest('[S290] Wrong APIKEY');\r",
+									"        break;\r",
+									"    case \"S291\":\r",
+									"        postman.setNextRequest('[S291] Wrong bookshelf id');\r",
+									"        break;\r",
+									"    case \"S292\":\r",
+									"        postman.setNextRequest('[S292] Add book to private bookshelf');\r",
+									"        break;\r",
+									"    case \"S501a\":\r",
+									"        postman.setNextRequest('[S501a] Get a list of books');\r",
+									"        break;\r",
+									"    case \"S501b\":\r",
+									"        postman.setNextRequest('[S501b] Pick one book');\r",
+									"        break;\r",
+									"    case \"S502\":\r",
+									"        postman.setNextRequest('[S502a] Empty test bookshelf');\r",
 									"        break;\r",
 									"    default:\r",
 									"        postman.setNextRequest(null)\r",
@@ -82,235 +113,1525 @@
 								{
 									"key": "q",
 									"value": "foo"
+								}
+							]
+						},
+						"description": "This is a fake request used for routing purpose."
+					},
+					"response": []
+				}
+			],
+			"description": "Start point folder, contains the ROUTING REQUEST."
+		},
+		{
+			"name": "INTEGRATION TESTS",
+			"item": [
+				{
+					"name": "VOLUMES",
+					"item": [
+						{
+							"name": "LIST BOOKS",
+							"item": [
+								{
+									"name": "[S001] CRITICAL",
+									"item": [
+										{
+											"name": "[S001] Critical Tests",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.test(\"[S001C001] Response has 200 status code\",() => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															"",
+															"const response = pm.response.json()",
+															"",
+															"pm.test(`[S001C002] Response object has all expected properties`,() => {",
+															"    pm.expect(response).to.be.an('object')",
+															"    pm.expect(response).to.have.property('kind');",
+															"    pm.expect(response.kind).to.eql('books#volumes');",
+															"    pm.expect(response).to.have.property('totalItems');",
+															"    pm.expect(response.totalItems).to.be.gt(0);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S001\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qData}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qData}}"
+														}
+													]
+												},
+												"description": "### Test Scenario : [S001] Critical Tests ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|The query has no parameter |\n|```THEN```|**I should get a valid response** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response object has all expected properties | 1 |\n\n#### datas : #### \n- ```qData```= \"arcachon\""
+											},
+											"response": []
+										}
+									],
+									"description": "Challenges response status code, format and structure."
 								},
 								{
-									"key": "key",
-									"value": "{{API_KEY}}",
-									"disabled": true
+									"name": "[S002] FILTERS",
+									"item": [
+										{
+											"name": "[S002] q filter",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S002\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"switch (data.testCase) {",
+															"    case \"C001\":",
+															"        pm.test(`[SC002C001] Each item has a TITLE including \"${data.qData}\"`, () => {",
+															"            pm.response.json().items.forEach(item => {",
+															"                pm.expect(item.volumeInfo.title.toLowerCase()).to.include(data.qData)",
+															"            })",
+															"        })",
+															"        break;",
+															"    case \"C002\":",
+															"        pm.test(`[SC002C002] Each item's AUTHORS is an array that includes \"${data.qData}\"`, () => {",
+															"        let result = false;",
+															"        pm.response.json().items.forEach(item => {",
+															"            pm.expect(item.volumeInfo.authors).to.be.an('array');",
+															"            item.volumeInfo.authors.forEach(author => {",
+															"               if(author.toLowerCase().includes(data.qData)) {",
+															"                    result = true;",
+															"                    }",
+															"                })",
+															"            })",
+															"        pm.expect(result).to.eql(true);",
+															"        })",
+															"        break;",
+															"    case \"C003\":",
+															"        pm.test(`[SC002C003] Response has a uniq item with isbn : \"${data.qData}\"`, () => {",
+															"        pm.expect(pm.response.json().items.length).to.eql(1);",
+															"        pm.response.json().items[0].volumeInfo.industryIdentifiers.forEach(industryIdentifier => {",
+															"            if(industryIdentifier.type === \"ISBN_13\") {",
+															"                pm.expect(industryIdentifier.identifier).to.eql(data.qData);",
+															"            }",
+															"        })",
+															"})",
+															"}",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qScope}}:{{qData}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qScope}}:{{qData}}"
+														}
+													]
+												},
+												"description": "### Test Scenario : [S002] Valid request format with q parameter ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|\"q\" is set with a filter |\n|```THEN```|**I should get a valid response with items matching \"q\" filter constraints** |\n\n\n### 3 test cases : ###\n\n| CASE | Description | iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | ```intitle``` check: Each item has a TITLE including the requested value | 1 | ```qScope```=\"intitle\"<br>```qData```=\"arcachon\" |\n| ```[C002]``` | ```inauthor``` check: Each item's AUTHORS is an array that includes the requested value | 1 | ```qScope```=\"inauthor\"<br>```qData```=\"arcachon\" |\n| ```[C003]``` | ```isbn``` check: Response has a uniq item with matching \"isbn\" | 1 | ```qScope```=\"isbn\"<br>```qData```=\"9781428925168\" |"
+											},
+											"response": []
+										}
+									],
+									"description": "Challenges responses to requests with \"q\" filtered values."
+								},
+								{
+									"name": "[S003-7] PARAMETERS",
+									"item": [
+										{
+											"name": "[S003] orderBy",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S003\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const items = pm.response.json().items\r",
+															"\r",
+															"switch(data.testCase) {\r",
+															"    case \"C001\":\r",
+															"    pm.test(`[S003C001] Response is valid when parameter orderBy is set to \"${data.orderBy}\"`, () => {\r",
+															"        pm.response.to.have.status(200);\r",
+															"    })\r",
+															"    break;\r",
+															"    case \"C002\":\r",
+															"    function makeTimestampFromString(string) {\r",
+															"    dateArray = string.split(\"-\");\r",
+															"    const date = new Date (dateArray[0], dateArray[1] ? dateArray[1] - 1: 0, dateArray[2]? dateArray[2].substring(0,2):1).getTime()\r",
+															"    return date;\r",
+															"    }\r",
+															"\r",
+															"    if(items.length > 1) {\r",
+															"        pm.test(`[S003C002] Response items are sorted from newest to oldest`, () => {\r",
+															"            let date1 = makeTimestampFromString(items[0].volumeInfo.publishedDate)\r",
+															"            let date2\r",
+															"            for(let i=1; i < items.length; i++) {\r",
+															"                date2 = makeTimestampFromString(items[i].volumeInfo.publishedDate)\r",
+															"                pm.expect(date2).to.be.lte(date1)\r",
+															"                date1 = date2\r",
+															"            }\r",
+															"        })\r",
+															"    };\r",
+															"    break;\r",
+															"    default: \r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qData}}&orderBy={{orderBy}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qData}}"
+														},
+														{
+															"key": "orderBy",
+															"value": "{{orderBy}}"
+														}
+													]
+												},
+												"description": "### Test Scenario : [S003] Valid request format with ```orderBy``` parameters ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```orderBy``` parameter is set with a valid value |\n|```THEN```|**I should get a valid response with items sorted accordingly** |\n\n\n### 2 test cases : ###\n\n| CASE | Description | iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response is valid with ```orderBy``` = \"relevance\" | 1 | ```qData```=\"balloon\"<br>```orderBy'```=\"relevance\" |\n| ```[C002]``` | Response items are sorted from newest to latest with ```orderBy``` = \"newest\" | 1 | ```qData```=\"balloon\"<br>```orderBy'```=\"newest\" |"
+											},
+											"response": []
+										},
+										{
+											"name": "[S004] maxResults",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const items = pm.response.json().items\r",
+															"\r",
+															"switch(data.testCase) {\r",
+															"    case \"C001\":\r",
+															"        pm.test(`[S004C001] Response has ${data.maxResults} items`, () => {\r",
+															"            pm.expect(items.length).to.be.lte(parseInt(data.maxResults))\r",
+															"        })\r",
+															"    break;\r",
+															"    case \"C002\":\r",
+															"        pm.test(`[S004C002] Response has ${data.maxResults} items`, () => {\r",
+															"            pm.expect(items).to.be.undefined;\r",
+															"        })\r",
+															"    break;\r",
+															"    default:\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S004\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qData}}&maxResults={{maxResults}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qData}}"
+														},
+														{
+															"key": "maxResults",
+															"value": "{{maxResults}}"
+														}
+													]
+												},
+												"description": "### Test Scenario : [S004] Valid request format with ```maxResults``` parameters ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```maxResults``` parameter is set with a valid value |\n|```THEN```|**I should get a valid response with a number of items matching accordingly** |\n\n\n### 2 test cases : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has a count of at least ```maxResults``` items | 1/2 | ```qData```=\"arcachon\"<br>```maxResults```= 20 |\n|  |  | 2/2 | ```qData```=\"arcachon\"<br>```maxResults```= 40 |\n| ```[C002]``` | Response has 0 item | 1/1 | ```qData```=\"arcachon\"<br>```maxResults```= 0 |"
+											},
+											"response": []
+										},
+										{
+											"name": "[S005] startIndex below",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const items = pm.response.json().items\r",
+															"\r",
+															"const bookIdIndexWithoutOffset = pm.variables.get('bookIdIndexWithoutOffset');\r",
+															"\r",
+															"switch(data.testCase) {\r",
+															"    case \"C001\":\r",
+															"        pm.test(`[S005C001] Results are offset accordingly to \"startIndex\" value`, () => {\r",
+															"\r",
+															"            const endpoint = pm.collectionVariables.get('endpoint');\r",
+															"\r",
+															"            pm.sendRequest(`${endpoint}/volumes?q=${data.qData}&startIndex=0`, (error, response) => {\r",
+															"                pm.expect(response).to.have.property('code',200);\r",
+															"                pm.expect(items[0].id).to.eql(response.json().items[1].id)\r",
+															"            });\r",
+															"        });\r",
+															"        break;\r",
+															"\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S005\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qData}}&startIndex={{startIndex}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qData}}"
+														},
+														{
+															"key": "startIndex",
+															"value": "{{startIndex}}"
+														}
+													]
+												},
+												"description": "### Test Scenario : [S005] Valid request format with ```startIndex``` value below count of items ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```startIndex``` parameter is set with a value below the count of items |\n|```THEN```|**I should get a valid response with items offset accordingly** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response items are offset accordingly to ```startIndex``` value | 1 | ```qData```=\"arcachon\"<br>```startIndex```= 1 |"
+											},
+											"response": []
+										},
+										{
+											"name": "[S006] startIndex above",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const items = pm.response.json().items\r",
+															"\r",
+															"const bookIdIndexWithoutOffset = pm.variables.get('bookIdIndexWithoutOffset');\r",
+															"\r",
+															"switch(data.testCase) {\r",
+															"    case \"C001\":\r",
+															"        pm.test(`[S006C001] Response has a \"totalItems\" value of 0 for a \"startIndex\" above \"totalResults\"`, () => {\r",
+															"        pm.expect(pm.response.json()).to.have.property('totalItems');\r",
+															"        pm.expect(pm.response.json().totalItems).to.eql(0);\r",
+															"        })\r",
+															"        break;\r",
+															"\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S006\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}\r",
+															"\r",
+															"endpoint = pm.collectionVariables.get('endpoint');\r",
+															"pm.sendRequest(`${endpoint}/volumes?q=${data.qData}`, (error, response) => {\r",
+															"    console.log(error ? error : \"Request ok\");\r",
+															"    pm.variables.set('startIndex', response.json().totalItems + 1)\r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qData}}&startIndex={{startIndex}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qData}}"
+														},
+														{
+															"key": "startIndex",
+															"value": "{{startIndex}}"
+														}
+													]
+												},
+												"description": "### Test Scenario : [S005] Valid request format with ```startIndex``` value above count of items ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```startIndex``` parameter is set with a value above the count of items |\n|```THEN```|**I should get a valid response with 0 item** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response is valid and has 0 item | 1 | ```qData```=\"arcachon\"<br>```startIndex```= set dynamically in script |"
+											},
+											"response": []
+										},
+										{
+											"name": "[S007] langRestrict",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S007\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"    const items = pm.response.json().items;\r",
+															"    \r",
+															"    pm.test(`[S007C001] Response returns items with language \"${data.langRestrict}\"`, () => {\r",
+															"        items.forEach(item => {\r",
+															"            pm.expect(item.volumeInfo.language).to.eql(data.langRestrict);\r",
+															"        })\r",
+															"    })"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qData}}&langRestrict={{langRestrict}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qData}}"
+														},
+														{
+															"key": "langRestrict",
+															"value": "{{langRestrict}}"
+														}
+													]
+												},
+												"description": "### Test Scenario : [S007] Valid request format with ```langRestrict``` parameter ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```langRestrict``` parameter is set with a valid value|\n|```THEN```|**I should get a valid response with items that has a ```language```value matching the requested parameter** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response is valid and each item's ```language``` value matches the input parameter| 1/3 | ```qData```=\"arcachon\"<br>```langRestrict```= \"fr\"|\n| | | 2/3 | ```qData```=\"arcachon\"<br>```langRestrict```= \"en\"|\n| | | 3/3 | ```qData```=\"arcachon\"<br>```langRestrict```= \"no\"|"
+											},
+											"response": []
+										}
+									],
+									"description": "Challenges responses to requests with different parameters."
+								},
+								{
+									"name": "[S089] Error Res",
+									"item": [
+										{
+											"name": "[S089] Invalid Parameters",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"switch(data.testCase) {\r",
+															"    case \"C001\" :\r",
+															"        pm.test(`[S089C001] Response is code \"400\" with error msg containing \"${data.expected.msgPart}\" for ${data.parameter} value of \"${data.value}\"`, () => {\r",
+															"            pm.response.to.have.status(400);\r",
+															"            pm.expect(pm.response.json()).to.have.property('error');\r",
+															"            pm.expect(pm.response.json().error).to.have.property('message');\r",
+															"            pm.expect(pm.response.json().error.message).includes(data.expected.msgPart)\r",
+															"        })\r",
+															"    break;\r",
+															"    default:\r",
+															"    \r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S089\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qData}}&{{parameter}}={{value}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qData}}"
+														},
+														{
+															"key": "{{parameter}}",
+															"value": "{{value}}"
+														}
+													]
+												},
+												"description": "### Test Scenario : [S089] Valid request format with NOT valid parameters ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|My parameter(s) is/are not valid|\n|```THEN```|**I should get 400 response with error msg containig mention of the invalid parameter** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response is not valid and has error msg mentionning the invalid parameter| 1/3 | ```qData```=\"arcachon\"<br>```parameter```= \"orderBy\"<br>```value```= \"xxx\"|\n| | |2/3 | ```qData```=\"arcachon\"<br>```parameter```= \"maxResults\"<br>```value```= \"xxx\"|\n| | |3/3 | ```qData```=\"arcachon\"<br>```parameter```= \"startIndex\"<br>```value```= \"xxx\"|"
+											},
+											"response": []
+										}
+									],
+									"description": "Challenges response status and error message to request with invalid parameters."
+								}
+							],
+							"description": "In this folder all requests for BOOKS by parameter :\n\n```{{endpoint}}/volumes?q=```",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							]
+						},
+						{
+							"name": "GET BOOK",
+							"item": [
+								{
+									"name": "[S101] CRITICAL",
+									"item": [
+										{
+											"name": "[S101] Critical Tests",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S101\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.test(\"[S101C001] response has 200 status\",() => {\r",
+															"    pm.response.to.have.status(200);\r",
+															"});\r",
+															"\r",
+															"const response = pm.response.json()\r",
+															"\r",
+															"pm.test(`[S101C002] Response object has all expected properties`,() => {\r",
+															"    pm.expect(response).to.be.an('object')\r",
+															"    pm.expect(response).to.have.property('kind');\r",
+															"    pm.expect(response.kind).to.eql('books#volume');\r",
+															"    pm.expect(response).to.have.property('volumeInfo');\r",
+															"    pm.expect(response.volumeInfo).to.be.an('object')\r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes/{{bookId}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes",
+														"{{bookId}}"
+													]
+												},
+												"description": "### Test Scenario : [S101] Minimal valid request for a book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for book by id with valid endpoint|\n|```AND```|The id is valid |\n|```THEN```|**I should get a valid response** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has \"200\" Status code | 1 |\n| ```[C002]``` | Response object has all expected properties | 1 |\n\n**Datas :**\n- ```bookId``` =  B3hOv6y9_dcC"
+											},
+											"response": []
+										}
+									],
+									"description": "Challenges response status code, format and structure."
+								},
+								{
+									"name": "[S102] Content Check",
+									"item": [
+										{
+											"name": "[S102] Check content",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S102\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.test(\"[S102C001] Response id matches request id\",() => {\r",
+															"    pm.expect(pm.response.json().id).to.eql(data.bookId)\r",
+															"});\r",
+															"\r",
+															"pm.test(`[S102C002] Response title matches ${data.expected.title}`,() => {\r",
+															"    pm.expect(pm.response.json().volumeInfo.title).to.eql(data.expected.title)\r",
+															"});\r",
+															"\r",
+															"pm.test(\"[S102C003] Response image link is valid and pointing to an image\",() => {\r",
+															"    pm.expect(pm.response.json().volumeInfo).to.have.property('imageLinks');\r",
+															"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');\r",
+															"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;\r",
+															"    pm.expect(imageUrl).to.be.a('string');\r",
+															"    pm.expect(imageUrl).includes('http');\r",
+															"    if(imageUrl) {\r",
+															"        pm.sendRequest(imageUrl, (error, response) => {\r",
+															"            console.log(error ? error : \"image request ok\")\r",
+															"            pm.expect(response.code).to.eql(200);\r",
+															"            pm.expect(response.headers.get('Content-Type')).includes('image')\r",
+															"        })\r",
+															"    }\r",
+															"});\r",
+															"\r",
+															"pm.test(\"[S102C004] Response preview link is valid and pointing to an html page\",() => {\r",
+															"    pm.expect(pm.response.json().volumeInfo).to.have.property('previewLink');\r",
+															"    const previewUrl = pm.response.json().volumeInfo.previewLink;\r",
+															"    pm.expect(previewUrl).to.be.a('string');\r",
+															"    pm.expect(previewUrl).includes('http');\r",
+															"    if(previewUrl) {\r",
+															"        pm.sendRequest(previewUrl, (error, response) => {\r",
+															"            console.log(error ? error : \"link request ok\")\r",
+															"            pm.expect(response.code).to.eql(200);\r",
+															"            pm.expect(response.headers.get('Content-Type')).includes('html')\r",
+															"        })\r",
+															"    }\r",
+															"});\r",
+															"\r",
+															"pm.test(\"[S102C005] Response info link is valid and pointing to an html page\",() => {\r",
+															"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');\r",
+															"    const infoUrl = pm.response.json().volumeInfo.infoLink;\r",
+															"    pm.expect(infoUrl).to.be.a('string');\r",
+															"    pm.expect(infoUrl).includes('http');\r",
+															"    if(infoUrl) {\r",
+															"        pm.sendRequest(infoUrl, (error, response) => {\r",
+															"            console.log(error ? error : \"link request ok\")\r",
+															"            pm.expect(response.code).to.eql(200);\r",
+															"            pm.expect(response.headers.get('Content-Type')).includes('html')\r",
+															"        })\r",
+															"    }\r",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes/{{bookId}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes",
+														"{{bookId}}"
+													]
+												},
+												"description": "### Test Scenario : [S102] Minimal valid request for a book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for book by id with valid endpoint|\n|```AND```|The id is valid |\n|```THEN```|**I should get a valid response** |\n\n\n### 3 test cases : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response ```ìd```matches the request | 2 |\n| ```[C002]``` | Response ```title```is as expected | 2|\n| ```[C003]``` | Response has ```thumbnail```parameter that contains an url string,<br>request to this url returns a 200 code with \"image\" as content-type | 2 |\n| ```[C004]``` | Response has ```previewLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | 2|\n| ```[C005]``` | Response has ```infoLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | 2 |\n\n**Datas :**\n```bookId```= \"B3hOv6y9_dcC\", \"92_C6N0Kq_oC\""
+											},
+											"response": []
+										}
+									],
+									"description": "Challenges response content, properties."
+								},
+								{
+									"name": "[S189] Error Res",
+									"item": [
+										{
+											"name": "[S189] Wrong ID",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S189\") {\r",
+															"    postman.setNextRequest(null)\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.test(`[S189C001] Response has 503 status code`, () => {\r",
+															"    pm.response.to.have.status(503);\r",
+															"})"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes/{{bookId}}&key={{API_KEY}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes",
+														"{{bookId}}&key={{API_KEY}}"
+													]
+												},
+												"description": "### Test Scenario : [S189] Valid request format with NOT valid id ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|My id is NOT valid|\n|```THEN```|**I should get 503 response** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has 503 status code| 1 | ```bookId```=\"wrongId\"|"
+											},
+											"response": []
+										}
+									],
+									"description": "Challenges response status and error message to request with invalid id."
+								}
+							],
+							"description": "In this folder all requests for one BOOK :\n\n```{{endpoint}}/volumes/id```",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"[S00] response time is below 400ms\",() => {",
+											"    pm.expect(pm.response.responseTime).to.be.below(400);",
+											"});"
+										]
+									}
 								}
 							]
 						}
+					],
+					"description": "Folder containing **VOLUMES** focused tests",
+					"auth": {
+						"type": "noauth"
 					},
-					"response": []
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "BOOKSHELVES",
+					"item": [
+						{
+							"name": "[S201] CRITICAL",
+							"item": [
+								{
+									"name": "[S201] Critical Tests",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"[S201C001] response has 200 status\",() => {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"const response = pm.response.json()\r",
+													"\r",
+													"pm.test(`[S201C002] Response object has a \"kind\" of bookshelf`,() => {\r",
+													"    pm.expect(response).to.be.an('object')\r",
+													"    pm.expect(response).to.have.property('kind');\r",
+													"    pm.expect(response.kind).to.eql('books#bookshelf');\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"if(data.scenario === \"S201\") {\r",
+													"    postman.setNextRequest(null)\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}?key={{apiKey}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"mylibrary",
+												"bookshelves",
+												"{{bookshelfId}}"
+											],
+											"query": [
+												{
+													"key": "key",
+													"value": "{{apiKey}}"
+												}
+											]
+										},
+										"description": "### Test Scenario : [S201] Critical Tests ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for bookshelf by id with valid endpoint|\n|```AND```| id is valid\n|```THEN```|**I should get a valid response** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has \"200\" Status code | 1 |\n| ```[C002]``` | Response object has a \"kind\" of bookshelf | 1 |\n\n**Datas :**\n- ```bookshelfId``` =  1"
+									},
+									"response": []
+								}
+							],
+							"description": "Challenges response status code, format and structure."
+						},
+						{
+							"name": "[S202] Get Bookshelf",
+							"item": [
+								{
+									"name": "[S202] Get Bookshelf details",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(`[S202C001] bookshelf ${data.bookshelfId} has ${data.expected.access} access and \"${data.expected.bookshelfTitle}\" title`, () => {\r",
+													"    pm.expect(pm.response.json().title).to.eql(data.expected.bookshelfTitle);\r",
+													"})"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"if(data.scenario === \"S202\") {\r",
+													"    postman.setNextRequest(null)\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}?key={{apiKey}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"mylibrary",
+												"bookshelves",
+												"{{bookshelfId}}"
+											],
+											"query": [
+												{
+													"key": "key",
+													"value": "{{apiKey}}"
+												}
+											]
+										},
+										"description": "### Test Scenario : [S202] Bookshelf details ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for bookshelf by id with valid endpoint|\n|```AND```| id is valid\n|```THEN```|**I should get a valid response with bookshelf details** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response is an item with \"title\" and \"access\" properties set accordingly | 3 |\n\n**Datas :**\n- ```bookshelfId``` = 0, 1001, 3"
+									},
+									"response": []
+								}
+							],
+							"description": "### Test Scenario : [S202] Get Bookshelf details ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for bookshelf by id with valid endpoint|\n|```AND```| id is valid\n|```THEN```|**I should get a valid response with bookshelf details** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has \"200\" Status code | 1 |\n| ```[C002]``` | Response object has a \"kind\" of bookshelf | 1 |\n\n**Datas :**\n- ```bookshelfId``` =  1"
+						},
+						{
+							"name": "[S203-204] Handle Book in bookshelf",
+							"item": [
+								{
+									"name": "[S203] Add book to public bookshelf",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(`[S203C001] Response has status 200`, ()=> {\r",
+													"    pm.response.to.have.status(200);\r",
+													"})\r",
+													"\r",
+													"pm.test(`[S203C002] Response to be empty object`, ()=> {\r",
+													"    pm.expect(pm.response.json()).to.be.an('object');\r",
+													"    pm.expect(pm.response.json().length).to.be.undefined;\r",
+													"})\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"if(data.scenario === \"S203\") {\r",
+													"    postman.setNextRequest(null)\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/addVolume?volumeId={{bookId}}&key={{apiKey}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"mylibrary",
+												"bookshelves",
+												"{{bookshelfId}}",
+												"addVolume"
+											],
+											"query": [
+												{
+													"key": "volumeId",
+													"value": "{{bookId}}"
+												},
+												{
+													"key": "key",
+													"value": "{{apiKey}}"
+												}
+											]
+										},
+										"description": "### Test Scenario : [S203] Add Book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to add a book in my bookshelf|\n|```THEN```|**I should get a valid empty response** |\n\n\n### 2 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has \"200\" code | 1 |\n| ```[C002]``` |  Response is an empty object | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001\n- ```bookId``` = 92_C6N0Kq_oC"
+									},
+									"response": []
+								},
+								{
+									"name": "[S204] Remove book from bookshelf",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(`[S204C001] Reponse has status 200`, ()=> {\r",
+													"    pm.response.to.have.status(200);\r",
+													"})\r",
+													"\r",
+													"pm.test(`[S204C002] Reponse to be empty object`, ()=> {\r",
+													"    pm.expect(pm.response.json()).to.be.an('object');\r",
+													"    pm.expect(pm.response.json().length).to.be.undefined;\r",
+													"})\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"if(data.scenario === \"S204\") {\r",
+													"    postman.setNextRequest(null)\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/removeVolume?volumeId={{bookId}}&key={{apiKey}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"mylibrary",
+												"bookshelves",
+												"{{bookshelfId}}",
+												"removeVolume"
+											],
+											"query": [
+												{
+													"key": "volumeId",
+													"value": "{{bookId}}"
+												},
+												{
+													"key": "key",
+													"value": "{{apiKey}}"
+												}
+											]
+										},
+										"description": "### Test Scenario : [S204] remove Book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to remove a book in my bookshelf|\n|```THEN```|**I should get a valid empty response** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has \"200\" code | 1 |\n| ```[C002]``` |  Response is an empty object | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001\n- ```bookId``` = 92_C6N0Kq_oC"
+									},
+									"response": []
+								}
+							],
+							"description": "This folder contains POST requests that manipulate bookshelves"
+						},
+						{
+							"name": "[S289] Error Res",
+							"item": [
+								{
+									"name": "[S289] Wrong Auth",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(`[S289C001] Response has 401 code with \"UNAUTHENTICATED\" status`, () => {",
+													"    pm.expect(pm.response.json()).to.have.property('error');",
+													"    pm.expect(pm.response.json().error).to.have.property('code', 401);",
+													"    pm.expect(pm.response.json().error).to.have.property('status', \"UNAUTHENTICATED\");",
+													"} )"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"if(data.scenario === \"S289\") {",
+													"    postman.setNextRequest(null)",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}?key={{apiKey}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"mylibrary",
+												"bookshelves",
+												"{{bookshelfId}}"
+											],
+											"query": [
+												{
+													"key": "key",
+													"value": "{{apiKey}}"
+												}
+											]
+										},
+										"description": "### Test Scenario : [S289] Wrong Auth ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a edition action|\n|```AND```|I have no valid AUTH|\n|```THEN```|**I should get an error response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has 401 code with \"UNAUTHENTICATED\" status | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001"
+									},
+									"response": []
+								},
+								{
+									"name": "[S290] Wrong APIKEY",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(`[S290C001] Response has 400 code with \"INVALID_ARGUMENT\" status`, () => {",
+													"    pm.expect(pm.response.json()).to.have.property('error');",
+													"    pm.expect(pm.response.json().error).to.have.property('code', 400);",
+													"    pm.expect(pm.response.json().error).to.have.property('status', \"INVALID_ARGUMENT\");",
+													"} )"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"if(data.scenario === \"S290\") {",
+													"    postman.setNextRequest(null)",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": [
+												{
+													"key": "tokenType",
+													"value": "Bearer",
+													"type": "string"
+												},
+												{
+													"key": "addTokenTo",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}?key={{key}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"mylibrary",
+												"bookshelves",
+												"{{bookshelfId}}"
+											],
+											"query": [
+												{
+													"key": "key",
+													"value": "{{key}}"
+												}
+											]
+										},
+										"description": "### Test Scenario : [S290] Wrong APIKEY ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a edition action|\n|```AND```|I have no valid APIKEY|\n|```THEN```|**I should get an error response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has 400 code with \"INVALID_ARGUMENT\" status | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001"
+									},
+									"response": []
+								},
+								{
+									"name": "[S291] Wrong bookshelf id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(`[S291C001] Response has 400 code with \"Invalid bookshelf ID.\" msg`, () => {",
+													"    pm.expect(pm.response.json()).to.have.property('error');",
+													"    pm.expect(pm.response.json().error).to.have.property('code', 400);",
+													"    pm.expect(pm.response.json().error).to.have.property('message', \"Invalid bookshelf ID.\");",
+													"} )"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"if(data.scenario === \"S291\") {",
+													"    postman.setNextRequest(null)",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}?key={{apiKey}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"mylibrary",
+												"bookshelves",
+												"{{bookshelfId}}"
+											],
+											"query": [
+												{
+													"key": "key",
+													"value": "{{apiKey}}"
+												}
+											]
+										},
+										"description": "### Test Scenario : [S291] Wrong bookshelf id ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a bookshelf by id|\n|```AND```|I the id is NOT valid|\n|```THEN```|**I should get an error response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has 400 code with \"Invalid bookshelf ID.\" msg | 1 |\n\n**Datas :**\n- ```bookshelfId``` = abc"
+									},
+									"response": []
+								},
+								{
+									"name": "[S292] Add book to private bookshelf",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(`[S292C001] Response has status 403`, ()=> {\r",
+													"    pm.response.to.have.status(403);\r",
+													"})\r",
+													"\r",
+													"pm.test(`[S292C002] Response to have matching error msg`, ()=> {\r",
+													"    pm.expect(pm.response.json().error.message).to.eql('Cannot modify read-only resource.');\r",
+													"})\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"if(data.scenario === \"S292\") {\r",
+													"    postman.setNextRequest(null)\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/addVolume?volumeId={{bookId}}&key={{apiKey}}",
+											"host": [
+												"{{endpoint}}"
+											],
+											"path": [
+												"mylibrary",
+												"bookshelves",
+												"{{bookshelfId}}",
+												"addVolume"
+											],
+											"query": [
+												{
+													"key": "volumeId",
+													"value": "{{bookId}}"
+												},
+												{
+													"key": "key",
+													"value": "{{apiKey}}"
+												}
+											]
+										},
+										"description": "### Test Scenario : [S292] Add Book to PRIVATE bookshelf ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to add a book in a private bookshelf|\n|```THEN```|**I should get a valid empty response** |\n\n\n### 2 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has \"403\" code | 1 |\n| ```[C002]``` |  Response to have matching error msg | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1\n- ```bookId``` = 92_C6N0Kq_oC"
+									},
+									"response": []
+								}
+							],
+							"description": "This folder contains all Error responding requests for bookshelves"
+						}
+					],
+					"description": "This folder contains all tests challenging **BOOKSHELF**",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			],
+			"description": "### This folder contains a set of INTEGRATION TESTS on : ###\n\n- **VOLUMES** :\n    - LIST BOOKS : requests for several books [S001] to [S099]\n    - GET BOOK : request for a specific book [101] to [S199]\n- **BOOKSHELVES** :\n    - requests to GET and MANIPULATE bookshelves [S201] to [299]\n\nEach request has a performance test challenging response speed, and format :\n\n### TEST SCENARIO : [S00Time] Response Time\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in less than 400ms** |\n\n### TEST SCENARIO : [S00json] response format is JSON\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in JSON format** |",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"[S00time] response time is below 400ms\",() => {",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});",
+							"",
+							"pm.test(\"[S00json] response format is JSON\",() => {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.response.to.be.json;",
+							"});"
+						]
+					}
 				}
 			]
 		},
 		{
-			"name": "LIST BOOKS",
+			"name": "REGRESSION TESTS",
 			"item": [
 				{
-					"name": "[S001] BASICS",
+					"name": "[S501] : list books, then pick one",
 					"item": [
 						{
-							"name": "[S001] Critical Tests",
+							"name": "[S501a] Get a list of books",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"[S001C001] Response has 200 status code\",() => {",
+											"pm.test(\"[S201aC001] Response has 200 status code\",() => {",
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
-											"pm.test(\"[S001C002] Response Content-Type is present and is JSON\",() => {",
+											"pm.test(\"[S201aC002] Response Content-Type is present and is JSON\",() => {",
 											"    pm.response.to.have.header(\"Content-Type\");",
 											"    pm.response.to.be.json;",
 											"});",
 											"",
 											"const response = pm.response.json()",
 											"",
-											"pm.test(`[S001C003] Response object has all expected properties`,() => {",
+											"pm.test(`[S201aC003] Response object has all expected properties`,() => {",
 											"    pm.expect(response).to.be.an('object')",
 											"    pm.expect(response).to.have.property('kind');",
 											"    pm.expect(response.kind).to.eql('books#volumes');",
 											"    pm.expect(response).to.have.property('totalItems');",
 											"    pm.expect(response.totalItems).to.be.gt(0);",
 											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"if(data.scenario === \"S001\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{endpoint}}/volumes?q={{qData}}",
-									"host": [
-										"{{endpoint}}"
-									],
-									"path": [
-										"volumes"
-									],
-									"query": [
-										{
-											"key": "q",
-											"value": "{{qData}}"
-										},
-										{
-											"key": "key",
-											"value": "{{API_KEY}}",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "[S001] Critical Tests",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{endpoint}}/volumes?q=arcachon&key={{API_KEY}}",
-											"host": [
-												"{{endpoint}}"
-											],
-											"path": [
-												"volumes"
-											],
-											"query": [
-												{
-													"key": "q",
-													"value": "arcachon"
-												},
-												{
-													"key": "key",
-													"value": "{{API_KEY}}"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=UTF-8"
-										},
-										{
-											"key": "Vary",
-											"value": "Origin"
-										},
-										{
-											"key": "Vary",
-											"value": "X-Origin"
-										},
-										{
-											"key": "Vary",
-											"value": "Referer"
-										},
-										{
-											"key": "Content-Encoding",
-											"value": "gzip"
-										},
-										{
-											"key": "Date",
-											"value": "Sat, 03 Apr 2021 13:27:52 GMT"
-										},
-										{
-											"key": "Server",
-											"value": "ESF"
-										},
-										{
-											"key": "Cache-Control",
-											"value": "private"
-										},
-										{
-											"key": "X-XSS-Protection",
-											"value": "0"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "Alt-Svc",
-											"value": "h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\""
-										},
-										{
-											"key": "Transfer-Encoding",
-											"value": "chunked"
-										}
-									],
-									"cookie": [],
-									"body": "{\n    \"kind\": \"books#volumes\",\n    \"totalItems\": 1661,\n    \"items\": [\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"5I9IAQAAMAAJ\",\n            \"etag\": \"oRyXDPlMv4w\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/5I9IAQAAMAAJ\",\n            \"volumeInfo\": {\n                \"title\": \"Host Bibliographic Record for Boundwith Item Barcode 30112027908901 and Others\",\n                \"subtitle\": \"(1895-1903)\",\n                \"publishedDate\": \"1895\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"OTHER\",\n                        \"identifier\": \"UIUC:30112027908836\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"printType\": \"BOOK\",\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"0.3.3.0.full.1\",\n                \"panelizationSummary\": {\n                    \"containsEpubBubbles\": false,\n                    \"containsImageBubbles\": false\n                },\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=5I9IAQAAMAAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=5I9IAQAAMAAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=5I9IAQAAMAAJ&pg=RA5-PR3&dq=arcachon&hl=&cd=1&source=gbs_api\",\n                \"infoLink\": \"https://play.google.com/store/books/details?id=5I9IAQAAMAAJ&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://play.google.com/store/books/details?id=5I9IAQAAMAAJ\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"FREE\",\n                \"isEbook\": true,\n                \"buyLink\": \"https://play.google.com/store/books/details?id=5I9IAQAAMAAJ&rdid=book-5I9IAQAAMAAJ&rdot=1&source=gbs_api\"\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"ALL_PAGES\",\n                \"embeddable\": true,\n                \"publicDomain\": true,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Host_Bibliographic_Record_for_Boundwith.epub?id=5I9IAQAAMAAJ&hl=&output=epub&source=gbs_api\"\n                },\n                \"pdf\": {\n                    \"isAvailable\": false\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=5I9IAQAAMAAJ&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"FULL_PUBLIC_DOMAIN\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"D&#39;<b>ARCACHON</b> STATION BIOLOGIQUE Présidents d&#39;honneur . M. le RECTEUR <br>\\nde l&#39;Université de Bordeaux ; M. le DOYEN de la Faculté des Sciences de <br>\\nBordeaux ; M. le DOYEN de la Faculté de Médecine et de Pharmacie de <br>\\nBordeaux ; M.\"\n            }\n        },\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"bMwHY-1lA0AC\",\n            \"etag\": \"6neCmCdzsHU\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/bMwHY-1lA0AC\",\n            \"volumeInfo\": {\n                \"title\": \"Les villes nouvelles. Arcachon. La plage, la forêt et la ville d'hiver\",\n                \"authors\": [\n                    \"F. Dubarreau\"\n                ],\n                \"publishedDate\": \"1863\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"OTHER\",\n                        \"identifier\": \"BML:37001103310905\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"pageCount\": 43,\n                \"printType\": \"BOOK\",\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"0.2.2.0.full.1\",\n                \"panelizationSummary\": {\n                    \"containsEpubBubbles\": false,\n                    \"containsImageBubbles\": false\n                },\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=bMwHY-1lA0AC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=bMwHY-1lA0AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=bMwHY-1lA0AC&pg=PA16&dq=arcachon&hl=&cd=2&source=gbs_api\",\n                \"infoLink\": \"https://play.google.com/store/books/details?id=bMwHY-1lA0AC&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://play.google.com/store/books/details?id=bMwHY-1lA0AC\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"FREE\",\n                \"isEbook\": true,\n                \"buyLink\": \"https://play.google.com/store/books/details?id=bMwHY-1lA0AC&rdid=book-bMwHY-1lA0AC&rdot=1&source=gbs_api\"\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"ALL_PAGES\",\n                \"embeddable\": true,\n                \"publicDomain\": true,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Les_villes_nouvelles_Arcachon_La_plage_l.epub?id=bMwHY-1lA0AC&hl=&output=epub&source=gbs_api\"\n                },\n                \"pdf\": {\n                    \"isAvailable\": true,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Les_villes_nouvelles_Arcachon_La_plage_l.pdf?id=bMwHY-1lA0AC&hl=&output=pdf&sig=ACfU3U1ZvQai5FklX9oHG3bWFY6UffsN-A&source=gbs_api\"\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=bMwHY-1lA0AC&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"FULL_PUBLIC_DOMAIN\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"IT <b>ARCACHON</b> DEVANT LA SCIENCE La cour d&#39;assises . Les travaux de M. <br>\\nHameau . Analyses . <b>Arcachon</b> , patrie des enfants . -- Pourquoi les enfants l&#39;<br>\\naiment et pourquoi ils y vont . La clientèle du docteur Blanche . Climatologie .\"\n            }\n        },\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"92_C6N0Kq_oC\",\n            \"etag\": \"Coj8LsC23H8\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/92_C6N0Kq_oC\",\n            \"volumeInfo\": {\n                \"title\": \"Notre-Dame d'Arcachon\",\n                \"authors\": [\n                    \"Xavier Mouls\"\n                ],\n                \"publishedDate\": \"1855\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"OTHER\",\n                        \"identifier\": \"BML:37001101181274\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"pageCount\": 51,\n                \"printType\": \"BOOK\",\n                \"categories\": [\n                    \"Arcachon (France)\"\n                ],\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"0.0.1.0.full.1\",\n                \"panelizationSummary\": {\n                    \"containsEpubBubbles\": false,\n                    \"containsImageBubbles\": false\n                },\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=92_C6N0Kq_oC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=92_C6N0Kq_oC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=92_C6N0Kq_oC&pg=PA3&dq=arcachon&hl=&cd=3&source=gbs_api\",\n                \"infoLink\": \"https://play.google.com/store/books/details?id=92_C6N0Kq_oC&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://play.google.com/store/books/details?id=92_C6N0Kq_oC\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"FREE\",\n                \"isEbook\": true,\n                \"buyLink\": \"https://play.google.com/store/books/details?id=92_C6N0Kq_oC&rdid=book-92_C6N0Kq_oC&rdot=1&source=gbs_api\"\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"ALL_PAGES\",\n                \"embeddable\": true,\n                \"publicDomain\": true,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Notre_Dame_d_Arcachon.epub?id=92_C6N0Kq_oC&hl=&output=epub&source=gbs_api\"\n                },\n                \"pdf\": {\n                    \"isAvailable\": true,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Notre_Dame_d_Arcachon.pdf?id=92_C6N0Kq_oC&hl=&output=pdf&sig=ACfU3U2gRpiYQ6xB48CHuAMNB4tN6Fa1ww&source=gbs_api\"\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=92_C6N0Kq_oC&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"FULL_PUBLIC_DOMAIN\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"ÉMINENCE , En 1624 , le célèbre cardinal de Sourdis donna un grand essor au <br>\\npèlerinage de Notre - Dame d &#39; <b>Arcachon</b> , en invitant les fidèles à remplacer par <br>\\nune chapelle en pierres le modeste oratoire en bois élevé par les soins d&nbsp;...\"\n            }\n        },\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"UkxRAAAAcAAJ\",\n            \"etag\": \"t4r/YTe0YiE\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/UkxRAAAAcAAJ\",\n            \"volumeInfo\": {\n                \"title\": \"Histoire de N. - D. d'Arcachon et du b(ienheureux) Thomas Illyricus son fondateur\",\n                \"subtitle\": \"(Maria.)\",\n                \"authors\": [\n                    \"L. Delpeuch\"\n                ],\n                \"publishedDate\": \"1872\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"OTHER\",\n                        \"identifier\": \"BSB:BSB11019478\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"pageCount\": 235,\n                \"printType\": \"BOOK\",\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"1.2.3.0.full.1\",\n                \"panelizationSummary\": {\n                    \"containsEpubBubbles\": false,\n                    \"containsImageBubbles\": false\n                },\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=UkxRAAAAcAAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=UkxRAAAAcAAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=UkxRAAAAcAAJ&pg=PA228&dq=arcachon&hl=&cd=4&source=gbs_api\",\n                \"infoLink\": \"https://play.google.com/store/books/details?id=UkxRAAAAcAAJ&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://play.google.com/store/books/details?id=UkxRAAAAcAAJ\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"FREE\",\n                \"isEbook\": true,\n                \"buyLink\": \"https://play.google.com/store/books/details?id=UkxRAAAAcAAJ&rdid=book-UkxRAAAAcAAJ&rdot=1&source=gbs_api\"\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"ALL_PAGES\",\n                \"embeddable\": true,\n                \"publicDomain\": true,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Histoire_de_N_D_d_Arcachon_et_du_b_ienhe.epub?id=UkxRAAAAcAAJ&hl=&output=epub&source=gbs_api\"\n                },\n                \"pdf\": {\n                    \"isAvailable\": true,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Histoire_de_N_D_d_Arcachon_et_du_b_ienhe.pdf?id=UkxRAAAAcAAJ&hl=&output=pdf&sig=ACfU3U3NHNElXOBsiMpmwKJWMppMWRyK3Q&source=gbs_api\"\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=UkxRAAAAcAAJ&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"FULL_PUBLIC_DOMAIN\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"(Maria.) L. Delpeuch. &gt;&gt; » que vous soyez isolé et retranché du reste des <br>\\nhommes . » <b>Arcachon</b> est une sorte d&#39;Océanie francaise ; c&#39;est Taïti à quelques <br>\\nkilomètres de Bordeaux ; la vie sauvage à une portée de fusil du foyer de la <br>\\ncivilisation .\"\n            }\n        },\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"_zuaK0fgqw8C\",\n            \"etag\": \"1Oepeoa1V9M\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/_zuaK0fgqw8C\",\n            \"volumeInfo\": {\n                \"title\": \"La chapellede Notre-Dame d'Arcachon\",\n                \"subtitle\": \"esquisse historique\",\n                \"authors\": [\n                    \"Oscar Dejean\"\n                ],\n                \"publishedDate\": \"1856\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"OTHER\",\n                        \"identifier\": \"BML:37001102802142\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"pageCount\": 23,\n                \"printType\": \"BOOK\",\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"0.1.3.0.full.1\",\n                \"panelizationSummary\": {\n                    \"containsEpubBubbles\": false,\n                    \"containsImageBubbles\": false\n                },\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=_zuaK0fgqw8C&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=_zuaK0fgqw8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=_zuaK0fgqw8C&pg=PA16&dq=arcachon&hl=&cd=5&source=gbs_api\",\n                \"infoLink\": \"https://play.google.com/store/books/details?id=_zuaK0fgqw8C&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://play.google.com/store/books/details?id=_zuaK0fgqw8C\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"FREE\",\n                \"isEbook\": true,\n                \"buyLink\": \"https://play.google.com/store/books/details?id=_zuaK0fgqw8C&rdid=book-_zuaK0fgqw8C&rdot=1&source=gbs_api\"\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"ALL_PAGES\",\n                \"embeddable\": true,\n                \"publicDomain\": true,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false,\n                    \"downloadLink\": \"http://books.google.fr/books/download/La_chapellede_Notre_Dame_d_Arcachon.epub?id=_zuaK0fgqw8C&hl=&output=epub&source=gbs_api\"\n                },\n                \"pdf\": {\n                    \"isAvailable\": true,\n                    \"downloadLink\": \"http://books.google.fr/books/download/La_chapellede_Notre_Dame_d_Arcachon.pdf?id=_zuaK0fgqw8C&hl=&output=pdf&sig=ACfU3U1nPZWhMiXxwl7OSVRxTZ7YqL4GgQ&source=gbs_api\"\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=_zuaK0fgqw8C&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"FULL_PUBLIC_DOMAIN\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"pour son entretien et subsistance , de faire la » quête au lieu de ladite Cbapelle <br>\\net aux envi» rons . . . . » Les Cordeliers continuèrent de fournir des aumôniers au <br>\\nsanctuaire de Notre - Dame d &#39; <b>Arcachon</b> jusqu &#39; en 1792 , où le dernier d &#39; entre&nbsp;...\"\n            }\n        },\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"P1o9AAAAYAAJ\",\n            \"etag\": \"nwaG4Zn8vos\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/P1o9AAAAYAAJ\",\n            \"volumeInfo\": {\n                \"title\": \"Exposition internationale de pêche & d'agriculture d'Arcachon ...\",\n                \"publishedDate\": \"1867\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"OTHER\",\n                        \"identifier\": \"HARVARD:HWG1TX\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"pageCount\": 21,\n                \"printType\": \"BOOK\",\n                \"categories\": [\n                    \"Arcachon\"\n                ],\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"0.1.4.0.full.1\",\n                \"panelizationSummary\": {\n                    \"containsEpubBubbles\": false,\n                    \"containsImageBubbles\": false\n                },\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=P1o9AAAAYAAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=P1o9AAAAYAAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=P1o9AAAAYAAJ&pg=PA1&dq=arcachon&hl=&cd=6&source=gbs_api\",\n                \"infoLink\": \"https://play.google.com/store/books/details?id=P1o9AAAAYAAJ&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://play.google.com/store/books/details?id=P1o9AAAAYAAJ\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"FREE\",\n                \"isEbook\": true,\n                \"buyLink\": \"https://play.google.com/store/books/details?id=P1o9AAAAYAAJ&rdid=book-P1o9AAAAYAAJ&rdot=1&source=gbs_api\"\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"ALL_PAGES\",\n                \"embeddable\": true,\n                \"publicDomain\": true,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Exposition_internationale_de_p%C3%AAche_d_ag.epub?id=P1o9AAAAYAAJ&hl=&output=epub&source=gbs_api\"\n                },\n                \"pdf\": {\n                    \"isAvailable\": true,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Exposition_internationale_de_p%C3%AAche_d_ag.pdf?id=P1o9AAAAYAAJ&hl=&output=pdf&sig=ACfU3U287Yz5EyRfBE9rLMwSC_LVJHG_ZA&source=gbs_api\"\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=P1o9AAAAYAAJ&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"FULL_PUBLIC_DOMAIN\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"EXPOSITION INTERNATIONALE - DE PÊCHE ET D &#39; AQUICULTURE D &#39; <br>\\n<b>ARCACHON</b> L &#39; exposition de pêche et d &#39; aquiculture d &#39; <b>Arcachon</b> , ouverte au <br>\\nmois de juillet 1866 , a présenté , comme celle de Boulogne , un vif intérêt . <br>\\nOrganisée&nbsp;...\"\n            }\n        },\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"p78XAAAAYAAJ\",\n            \"etag\": \"VO2AuAVYEO0\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/p78XAAAAYAAJ\",\n            \"volumeInfo\": {\n                \"title\": \"Le pèlerinage de Notre-Dame d'Arcachon et la Santa Casa\",\n                \"authors\": [\n                    \"Xavier Mouls\"\n                ],\n                \"publishedDate\": \"1857\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"OTHER\",\n                        \"identifier\": \"HARVARD:32044100118884\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"pageCount\": 34,\n                \"printType\": \"BOOK\",\n                \"categories\": [\n                    \"Arcachon (France)\"\n                ],\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"0.1.2.0.full.1\",\n                \"panelizationSummary\": {\n                    \"containsEpubBubbles\": false,\n                    \"containsImageBubbles\": false\n                },\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=p78XAAAAYAAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=p78XAAAAYAAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=p78XAAAAYAAJ&pg=PA23&dq=arcachon&hl=&cd=7&source=gbs_api\",\n                \"infoLink\": \"https://play.google.com/store/books/details?id=p78XAAAAYAAJ&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://play.google.com/store/books/details?id=p78XAAAAYAAJ\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"FREE\",\n                \"isEbook\": true,\n                \"buyLink\": \"https://play.google.com/store/books/details?id=p78XAAAAYAAJ&rdid=book-p78XAAAAYAAJ&rdot=1&source=gbs_api\"\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"ALL_PAGES\",\n                \"embeddable\": true,\n                \"publicDomain\": true,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Le_p%C3%A8lerinage_de_Notre_Dame_d_Arcachon.epub?id=p78XAAAAYAAJ&hl=&output=epub&source=gbs_api\"\n                },\n                \"pdf\": {\n                    \"isAvailable\": true,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Le_p%C3%A8lerinage_de_Notre_Dame_d_Arcachon.pdf?id=p78XAAAAYAAJ&hl=&output=pdf&sig=ACfU3U32_nb19DpWc7Lqybh9PrtMh4Se1A&source=gbs_api\"\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=p78XAAAAYAAJ&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"FULL_PUBLIC_DOMAIN\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"Tous les membres reçoivent une gravure représentant N . - D . d &#39; <b>Arcachon</b> , <br>\\navec un prospectus de l &#39; auvre , accompagné de cette prière : « 0 Marie ! Mère <br>\\nde Dieu , » qui avez ordonné à la tempête et aux flots de dé» &gt; poser , sur les <br>\\nriantes&nbsp;...\"\n            }\n        },\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"szVYAAAAcAAJ\",\n            \"etag\": \"Q1L5Q2voH8w\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/szVYAAAAcAAJ\",\n            \"volumeInfo\": {\n                \"title\": \"Un Voyage au bassin d'Arcachon\",\n                \"authors\": [\n                    \"Henri RIBADIEU\"\n                ],\n                \"publishedDate\": \"1859\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"OTHER\",\n                        \"identifier\": \"BL:A0017859331\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"pageCount\": 163,\n                \"printType\": \"BOOK\",\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"0.1.1.0.full.1\",\n                \"panelizationSummary\": {\n                    \"containsEpubBubbles\": false,\n                    \"containsImageBubbles\": false\n                },\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=szVYAAAAcAAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=szVYAAAAcAAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=szVYAAAAcAAJ&pg=PA27&dq=arcachon&hl=&cd=8&source=gbs_api\",\n                \"infoLink\": \"https://play.google.com/store/books/details?id=szVYAAAAcAAJ&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://play.google.com/store/books/details?id=szVYAAAAcAAJ\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"FREE\",\n                \"isEbook\": true,\n                \"buyLink\": \"https://play.google.com/store/books/details?id=szVYAAAAcAAJ&rdid=book-szVYAAAAcAAJ&rdot=1&source=gbs_api\"\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"ALL_PAGES\",\n                \"embeddable\": true,\n                \"publicDomain\": true,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false,\n                    \"downloadLink\": \"http://books.google.fr/books/download/Un_Voyage_au_bassin_d_Arcachon.epub?id=szVYAAAAcAAJ&hl=&output=epub&source=gbs_api\"\n                },\n                \"pdf\": {\n                    \"isAvailable\": false\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=szVYAAAAcAAJ&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"FULL_PUBLIC_DOMAIN\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"elle est agitée , quelquefois furieuse , comme si l&#39;Angleterre , qui est là , à <br>\\nquelques milles , lui soufflait ses rancunes ; madame Patissier cependant avait <br>\\ndédaigné , et Calais , et Dieppe , et le Havre ; elle avait donné la préférence à <br>\\n<b>Arcachon</b>&nbsp;...\"\n            }\n        },\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"h5aXJXa2yggC\",\n            \"etag\": \"qjawhuiho60\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/h5aXJXa2yggC\",\n            \"volumeInfo\": {\n                \"title\": \"Bassin d'Arcachon entre dunes et landes\",\n                \"authors\": [\n                    \"Charles Daney\",\n                    \"Régine Rosenthal\"\n                ],\n                \"publisher\": \"RENAISSANCE DU LIVRE\",\n                \"publishedDate\": \"2001-05-22\",\n                \"description\": \"Triangle bleu dans le triangle vert des cartes d'Aquitaine, le Bassin d'Arcachon n'est pour le voyageur pressé qu'un insolite petit triangle d'eau évanescent, léger comme une bulle, accroché en un point infime au rivage dunaire du golfe de Gascogne. Si le grand triangle forestier qui l'entoure inquiète souvent par son immensité, le Bassin d'Arcachon donne l'impression de l'infiniment petit, de l'infiniment fragile, tant paraît dérisoire le tissu de chenaux emmêlés qui le rattache à l'Atlantique. C'est pourtant ce fragile écheveau qui nous le rend précieux puisque la vie vient de l'océan et que des hommes se sont toujours fixés sur des bords qui ne furent jamais un \\\"territoire du vide\\\". Les marins parlent de bassin de radoub ou de carénage. Les vieux dictionnaires de la marine emploient le mot de bassin pour signifier la partie retirée d'une rade ou d'un port. À croire qu'au beau milieu de deux cent trente-cinq kilomètres de rouleaux, après qu'on en ait franchi les passes, le monde amphibie de cette baie marine apparaît plus calme que la plus calme baie, plus inespéré que le plus sûr des ports. Arcachon n'est pas un simple sigle de localisation. Comme tous les noms anciens de mer, de montagne ou de forêt, il est chargé de peurs et de légendes qui lui sont propres. Les anciens n'étaient pas loin d'y voir des êtres de chair aux réactions redoutables. Ils les apprivoisaient, quelquefois. Comme Iroise ou Morbihan, Arcachon est un nom d'autrefois, un nom de mer qui suffisait à en exprimer l'emplacement et le caractère tout à la fois. Tout le monde sait cela à l'exception des géographes qui éprouvent le besoin un peu pédant de préciser s'il s'agit de montagne, de forêt, de mer, de petite mer... Ils en ont rallongé les noms au grand dam des nécessités d'inscription sur la carte. Probablement gênés par le caractère d'Arcachon qu'ils trouvaient trop calme pour être une mer, trop difficile d'accès pour être une baie, trop \\\"sauvage\\\" pour être une rade, ils lui ont donné pour qualificatif le terme de Bassin. C'est vouloir forcer le regard des voyageurs et s'imposer un peu trop insolemment comme guide. Alors, pour retrouver la nature et l'esprit de ces lieux, nous l'appelons Arcachon comme étant le nom depuis trop longtemps oublié d'un monde séduisant parce que vivant, captivant, grouillant d'activités, mais fort complexe en sa diversité.\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"ISBN_13\",\n                        \"identifier\": \"9782804605025\"\n                    },\n                    {\n                        \"type\": \"ISBN_10\",\n                        \"identifier\": \"2804605027\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"pageCount\": 155,\n                \"printType\": \"BOOK\",\n                \"categories\": [\n                    \"Arcachon (France)\"\n                ],\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"0.1.1.0.preview.1\",\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=h5aXJXa2yggC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=h5aXJXa2yggC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=h5aXJXa2yggC&pg=PA156&dq=arcachon&hl=&cd=9&source=gbs_api\",\n                \"infoLink\": \"http://books.google.fr/books?id=h5aXJXa2yggC&dq=arcachon&hl=&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://books.google.com/books/about/Bassin_d_Arcachon_entre_dunes_et_landes.html?hl=&id=h5aXJXa2yggC\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"NOT_FOR_SALE\",\n                \"isEbook\": false\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"PARTIAL\",\n                \"embeddable\": true,\n                \"publicDomain\": false,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false\n                },\n                \"pdf\": {\n                    \"isAvailable\": false\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=h5aXJXa2yggC&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"SAMPLE\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"Noms propres <b>Arcachon</b> a récupéré en 1857 (date de sa fondation par décret) le <br>\\nnom qui n&#39;était plus utilisé depuis longtemps pour désigner la baie. Le seul <br>\\nfleuve véritablement landais et qui signifie l&#39;eau (&quot;aiguë&quot;) intègre ou non l&#39;article <br>\\net&nbsp;...\"\n            }\n        },\n        {\n            \"kind\": \"books#volume\",\n            \"id\": \"PkekrqGA0G4C\",\n            \"etag\": \"CEol14M6f2A\",\n            \"selfLink\": \"https://www.googleapis.com/books/v1/volumes/PkekrqGA0G4C\",\n            \"volumeInfo\": {\n                \"title\": \"Bateaux et gens du Bassin d'Arcachon\",\n                \"authors\": [\n                    \"Bernard Cherrier\"\n                ],\n                \"publisher\": \"Les Dossiers d'Aquitaine\",\n                \"publishedDate\": \"2000\",\n                \"industryIdentifiers\": [\n                    {\n                        \"type\": \"ISBN_10\",\n                        \"identifier\": \"2846220093\"\n                    },\n                    {\n                        \"type\": \"ISBN_13\",\n                        \"identifier\": \"9782846220095\"\n                    }\n                ],\n                \"readingModes\": {\n                    \"text\": false,\n                    \"image\": true\n                },\n                \"pageCount\": 94,\n                \"printType\": \"BOOK\",\n                \"categories\": [\n                    \"Aquitaine (France)\"\n                ],\n                \"maturityRating\": \"NOT_MATURE\",\n                \"allowAnonLogging\": false,\n                \"contentVersion\": \"0.0.3.0.preview.1\",\n                \"panelizationSummary\": {\n                    \"containsEpubBubbles\": false,\n                    \"containsImageBubbles\": false\n                },\n                \"imageLinks\": {\n                    \"smallThumbnail\": \"http://books.google.com/books/content?id=PkekrqGA0G4C&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api\",\n                    \"thumbnail\": \"http://books.google.com/books/content?id=PkekrqGA0G4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api\"\n                },\n                \"language\": \"fr\",\n                \"previewLink\": \"http://books.google.fr/books?id=PkekrqGA0G4C&pg=PA59&dq=arcachon&hl=&cd=10&source=gbs_api\",\n                \"infoLink\": \"http://books.google.fr/books?id=PkekrqGA0G4C&dq=arcachon&hl=&source=gbs_api\",\n                \"canonicalVolumeLink\": \"https://books.google.com/books/about/Bateaux_et_gens_du_Bassin_d_Arcachon.html?hl=&id=PkekrqGA0G4C\"\n            },\n            \"saleInfo\": {\n                \"country\": \"FR\",\n                \"saleability\": \"NOT_FOR_SALE\",\n                \"isEbook\": false\n            },\n            \"accessInfo\": {\n                \"country\": \"FR\",\n                \"viewability\": \"PARTIAL\",\n                \"embeddable\": true,\n                \"publicDomain\": false,\n                \"textToSpeechPermission\": \"ALLOWED\",\n                \"epub\": {\n                    \"isAvailable\": false\n                },\n                \"pdf\": {\n                    \"isAvailable\": false\n                },\n                \"webReaderLink\": \"http://play.google.com/books/reader?id=PkekrqGA0G4C&hl=&printsec=frontcover&source=gbs_api\",\n                \"accessViewStatus\": \"SAMPLE\",\n                \"quoteSharingAllowed\": false\n            },\n            \"searchInfo\": {\n                \"textSnippet\": \"Une régate organisée par le Cercle nautique de Bordeaux , dans la rade d&#39;<br>\\n<b>Arcachon</b> , sans doute vers 1850. On notera , outre le grand nombre de voiliers <br>\\nparticipant à l&#39;épreuve , la présence d&#39;échassiers et de quelques cavaliers . <br>\\nremonter&nbsp;...\"\n            }\n        }\n    ]\n}"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "[S002] FILTERS",
-					"item": [
-						{
-							"name": "[S002] q filter",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"if(data.scenario === \"S002\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"switch (data.testCase) {",
-											"    case \"C001\":",
-											"        pm.test(`[SC002C001] Each item has a TITLE including \"${data.qData}\"`, () => {",
-											"            pm.response.json().items.forEach(item => {",
-											"                pm.expect(item.volumeInfo.title.toLowerCase()).to.include(data.qData)",
-											"            })",
-											"        })",
-											"        break;",
-											"    case \"C002\":",
-											"        pm.test(`[SC002C002] Each item's AUTHORS is an array that includes \"${data.qData}\"`, () => {",
-											"        let result = false;",
-											"        pm.response.json().items.forEach(item => {",
-											"            pm.expect(item.volumeInfo.authors).to.be.an('array');",
-											"            item.volumeInfo.authors.forEach(author => {",
-											"               if(author.toLowerCase().includes(data.qData)) {",
-											"                    result = true;",
-											"                    }",
-											"                })",
-											"            })",
-											"        pm.expect(result).to.eql(true);",
-											"        })",
-											"        break;",
-											"    case \"C003\":",
-											"        pm.test(`[SC002C003] Response has a uniq item with isbn : \"${data.qData}\"`, () => {",
-											"        pm.expect(pm.response.json().items.length).to.eql(1);",
-											"        pm.response.json().items[0].volumeInfo.industryIdentifiers.forEach(industryIdentifier => {",
-											"            if(industryIdentifier.type === \"ISBN_13\") {",
-											"                pm.expect(industryIdentifier.identifier).to.eql(data.qData);",
+											"",
+											"const items = pm.response.json().items;",
+											"",
+											"pm.test(`[S201aC004] Response has ${data.maxResults} items`, () => {",
+											"    pm.expect(pm.response.json()).to.have.property('items')",
+											"    pm.expect(items).to.be.an('array')",
+											"    pm.expect(items.length).to.be.lte(parseInt(data.maxResults))",
+											"})",
+											"",
+											"pm.test(`[S201aC005] Each item of response has an \"id\" property`, () => {",
+											"    items.forEach((item)=> {",
+											"        pm.expect(item).to.have.property('id');",
+											"    })",
+											"})",
+											"",
+											"pm.test(`[S201aC006] Each item of response has a \"language\" property set to \"${data.lang}\"`, () => {",
+											"    items.forEach((item)=> {",
+											"        pm.expect(item.volumeInfo).to.have.property('language');",
+											"        pm.expect(item.volumeInfo.language).to.eql(data.lang);",
+											"    })",
+											"})",
+											"",
+											"pm.test(`[S201aC007] Each item's AUTHORS is an array that includes \"${data.expected.author}\"`, () => {",
+											"let result = false;",
+											"    items.forEach(item => {",
+											"        pm.expect(item.volumeInfo.authors).to.be.an('array');",
+											"        item.volumeInfo.authors.forEach(author => {",
+											"            if(author.toLowerCase().includes(data.expected.author)) {",
+											"                result = true;",
 											"            }",
 											"        })",
+											"    })",
 											"})",
+											"",
+											"function makeTimestampFromString(string) {",
+											"dateArray = string.split(\"-\");",
+											"const date = new Date (dateArray[0], dateArray[1] ? dateArray[1] - 1: 0, dateArray[2]? dateArray[2].substring(0,2):1).getTime()",
+											"return date;",
 											"}",
+											"",
+											"pm.test(`[S201aC008] Response items are sorted from newest to oldest`, () => {",
+											"    let date1 = makeTimestampFromString(items[0].volumeInfo.publishedDate)",
+											"    let date2",
+											"    for(let i=1; i < items.length; i++) {",
+											"        date2 = makeTimestampFromString(items[i].volumeInfo.publishedDate)",
+											"        pm.expect(date2).to.be.lte(date1)",
+											"        date1 = date2",
+											"    }",
+											"})",
+											"",
+											"pm.environment.set('bookId',items[0].id)",
+											"pm.environment.set('bookTitle',items[0].volumeInfo.title)",
+											"",
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"if(data.scenario === \"S501a\") {",
+											"    postman.setNextRequest(null)",
+											"}"
 										],
 										"type": "text/javascript"
 									}
@@ -320,7 +1641,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/volumes?q={{qScope}}:{{qData}}",
+									"raw": "{{endpoint}}/volumes?q={{qScope}}:{{qData}}&maxResults={{maxResults}}&langRestrict={{lang}}&orderBy={{orderBy}}",
 									"host": [
 										"{{endpoint}}"
 									],
@@ -333,131 +1654,91 @@
 											"value": "{{qScope}}:{{qData}}"
 										},
 										{
-											"key": "key",
-											"value": "{{API_KEY}}",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "[S003-7] PARAMETERS",
-					"item": [
-						{
-							"name": "[S003] orderBy",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"if(data.scenario === \"S003\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const items = pm.response.json().items\r",
-											"\r",
-											"switch(data.testCase) {\r",
-											"    case \"C001\":\r",
-											"    pm.test(`[S003C001] Response is valid when parameter orderBy is set to \"${data.orderBy}\"`, () => {\r",
-											"        pm.response.to.have.status(200);\r",
-											"    })\r",
-											"    break;\r",
-											"    case \"C002\":\r",
-											"    function makeTimestampFromString(string) {\r",
-											"    dateArray = string.split(\"-\");\r",
-											"    const date = new Date (dateArray[0], dateArray[1] ? dateArray[1] - 1: 0, dateArray[2]? dateArray[2].substring(0,2):1).getTime()\r",
-											"    return date;\r",
-											"    }\r",
-											"\r",
-											"    if(items.length > 1) {\r",
-											"        pm.test(`[S003C002] Response items are sorted from newest to oldest`, () => {\r",
-											"            let date1 = makeTimestampFromString(items[0].volumeInfo.publishedDate)\r",
-											"            let date2\r",
-											"            for(let i=1; i < items.length; i++) {\r",
-											"                date2 = makeTimestampFromString(items[i].volumeInfo.publishedDate)\r",
-											"                pm.expect(date2).to.be.lte(date1)\r",
-											"                date1 = date2\r",
-											"            }\r",
-											"        })\r",
-											"    };\r",
-											"    break;\r",
-											"    default: \r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{endpoint}}/volumes?q={{qData}}&orderBy={{orderBy}}",
-									"host": [
-										"{{endpoint}}"
-									],
-									"path": [
-										"volumes"
-									],
-									"query": [
+											"key": "maxResults",
+											"value": "{{maxResults}}"
+										},
 										{
-											"key": "q",
-											"value": "{{qData}}"
+											"key": "langRestrict",
+											"value": "{{lang}}"
 										},
 										{
 											"key": "orderBy",
 											"value": "{{orderBy}}"
-										},
-										{
-											"key": "key",
-											"value": "{{API_KEY}}",
-											"disabled": true
 										}
 									]
-								}
+								},
+								"description": "### Test Scenario : [S501a] Get a list of books ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint|\n|```AND```|I search for a book in FRENCH |\n|```AND```|I want the author to be \"Céline Minard\" |\n|```AND```|I want the 5 most recent publications |\n|```THEN```|**I should get a valid response matching the requirements** |\n\n\n### 3 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has headers with content-type \"JSON\" | 1 |\n| ```[C003]``` | Response is an object,<br>has ```kind``` property with value \"books#volumes\", <br>and has \"totalItems\" property with value above 0. | 1 |\n| ```[C004]``` | Response has ```ìtems```property, which is an array of ```maxResults``` objects | 1 |\n| ```[C005]``` | Each item has an ```ìd``` | 1 |\n| ```[C006]``` | Each item has an ```language``` = ```lang``` | 1 |\n| ```[C007]``` | Each item has an ```author``` property which is an array that contains ```qData```| 1 |\n| ```[C008]``` | Items are sorted by ```publishedDate```| 1 |\n\n#### Datas : ####\n- ```qScope```= \"inauthor\"\n- ```qData```=\"Céline Minard\"\n- ```maxResults```=\"5\"\n-```lang```=\"fr\"\n-```orderBy```=\"newest\""
 							},
 							"response": []
 						},
 						{
-							"name": "[S004] maxResults",
+							"name": "[S501b] Pick one book",
 							"event": [
 								{
-									"listen": "test",
+									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"const items = pm.response.json().items\r",
-											"\r",
-											"switch(data.testCase) {\r",
-											"    case \"C001\":\r",
-											"        pm.test(`[S004C001] Response has ${data.maxResults} items`, () => {\r",
-											"            pm.expect(items.length).to.be.lte(parseInt(data.maxResults))\r",
-											"        })\r",
-											"    break;\r",
-											"    default:\r",
+											"if(data.scenario === \"S501b\") {",
+											"    postman.setNextRequest(null)",
 											"}"
 										],
 										"type": "text/javascript"
 									}
 								},
 								{
-									"listen": "prerequest",
+									"listen": "test",
 									"script": {
 										"exec": [
-											"if(data.scenario === \"S004\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}\r",
+											"pm.test(\"[S501bC001] Response id matches request id\",() => {",
+											"    pm.expect(pm.response.json().id).to.eql(pm.environment.get('bookId'))",
+											"});",
+											"",
+											"pm.test(`[S501bC002] Response title matches`,() => {",
+											"    pm.expect(pm.response.json().volumeInfo.title).to.eql(pm.environment.get('bookTitle'))",
+											"});",
+											"",
+											"pm.test(\"[S501bC003] Response image link is valid and pointing to an image\",() => {",
+											"    pm.expect(pm.response.json().volumeInfo).to.have.property('imageLinks');",
+											"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');",
+											"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;",
+											"    pm.expect(imageUrl).to.be.a('string');",
+											"    pm.expect(imageUrl).includes('http');",
+											"    if(imageUrl) {",
+											"        pm.sendRequest(imageUrl, (error, response) => {",
+											"            console.log(error ? error : \"image request ok\")",
+											"            pm.expect(response.code).to.eql(200);",
+											"            pm.expect(response.headers.get('Content-Type')).includes('image')",
+											"        })",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"[S201bC004] Response preview link is valid and pointing to an html page\",() => {",
+											"    pm.expect(pm.response.json().volumeInfo).to.have.property('previewLink');",
+											"    const previewUrl = pm.response.json().volumeInfo.previewLink;",
+											"    pm.expect(previewUrl).to.be.a('string');",
+											"    pm.expect(previewUrl).includes('http');",
+											"    if(previewUrl) {",
+											"        pm.sendRequest(previewUrl, (error, response) => {",
+											"            console.log(error ? error : \"link request ok\")",
+											"            pm.expect(response.code).to.eql(200);",
+											"            pm.expect(response.headers.get('Content-Type')).includes('html')",
+											"        })",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"[S201bC005] Response info link is valid and pointing to an html page\",() => {",
+											"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');",
+											"    const infoUrl = pm.response.json().volumeInfo.infoLink;",
+											"    pm.expect(infoUrl).to.be.a('string');",
+											"    pm.expect(infoUrl).includes('http');",
+											"    if(infoUrl) {",
+											"        pm.sendRequest(infoUrl, (error, response) => {",
+											"            console.log(error ? error : \"link request ok\")",
+											"            pm.expect(response.code).to.eql(200);",
+											"            pm.expect(response.headers.get('Content-Type')).includes('html')",
+											"        })",
+											"    }",
+											"});",
 											""
 										],
 										"type": "text/javascript"
@@ -468,256 +1749,64 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/volumes?q={{qData}}&maxResults={{maxResults}}",
+									"raw": "{{endpoint}}/volumes/{{bookId}}",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
-										"volumes"
-									],
-									"query": [
-										{
-											"key": "key",
-											"value": "{{API_KEY}}",
-											"disabled": true
-										},
-										{
-											"key": "q",
-											"value": "{{qData}}"
-										},
-										{
-											"key": "maxResults",
-											"value": "{{maxResults}}"
-										}
+										"volumes",
+										"{{bookId}}"
 									]
-								}
+								},
+								"description": "### Test Scenario : [S502b] Pick one book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a book|\n|```AND```|The book is in a previous requested book list |\n|```THEN```|**I should get a valid response with a book and its informations** |\n\n\n### 3 test cases : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response ```ìd```matches the request | 1 |\n| ```[C002]``` | Response ```title```is as expected | 1|\n| ```[C003]``` | Response has ```thumbnail```parameter that contains an url string,<br>request to this url returns a 200 code with \"image\" as content-type | 1 |\n| ```[C004]``` | Response has ```previewLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | 1|\n| ```[C005]``` | Response has ```infoLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | 1 |\n\n**Datas :**\n- ```bookId```= \"B3hOv6y9_dcC\"\n- ```bookshelfId```= 1001"
 							},
 							"response": []
+						}
+					],
+					"description": "#### [S501] : As the client I want to list books, then pick one in order to retrieve informations aubout it. ####\n\nIt is made of 2 sub scenarios :\n- [S501a]\n- [S502b]",
+					"auth": {
+						"type": "noauth"
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
 						},
 						{
-							"name": "[S005] startIndex below",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const items = pm.response.json().items\r",
-											"\r",
-											"const bookIdIndexWithoutOffset = pm.variables.get('bookIdIndexWithoutOffset');\r",
-											"\r",
-											"switch(data.testCase) {\r",
-											"    case \"C001\":\r",
-											"        pm.test(`[S005C001] Results are offset accordingly to \"startIndex\" value`, () => {\r",
-											"\r",
-											"            const endpoint = pm.collectionVariables.get('endpoint');\r",
-											"            const apikey = pm.collectionVariables.get('API_KEY');\r",
-											"\r",
-											"            pm.sendRequest(`${endpoint}/volumes?q=${data.qData}&startIndex=0&key=${apikey}`, (error, response) => {\r",
-											"            pm.expect(items[0].id).to.eql(response.json().items[1].id)\r",
-											"            });\r",
-											"        });\r",
-											"        break;\r",
-											"\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"if(data.scenario === \"S005\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{endpoint}}/volumes?q={{qData}}&startIndex={{startIndex}}",
-									"host": [
-										"{{endpoint}}"
-									],
-									"path": [
-										"volumes"
-									],
-									"query": [
-										{
-											"key": "q",
-											"value": "{{qData}}"
-										},
-										{
-											"key": "startIndex",
-											"value": "{{startIndex}}"
-										},
-										{
-											"key": "key",
-											"value": "{{API_KEY}}",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "[S006] startIndex above",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const items = pm.response.json().items\r",
-											"\r",
-											"const bookIdIndexWithoutOffset = pm.variables.get('bookIdIndexWithoutOffset');\r",
-											"\r",
-											"switch(data.testCase) {\r",
-											"    case \"C001\":\r",
-											"        pm.test(`[S006C001] Response has a \"totalItems\" value of 0 for a \"startIndex\" above \"totalResults\"`, () => {\r",
-											"        pm.expect(pm.response.json()).to.have.property('totalItems');\r",
-											"        pm.expect(pm.response.json().totalItems).to.eql(0);\r",
-											"        })\r",
-											"        break;\r",
-											"\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"if(data.scenario === \"S006\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}\r",
-											"\r",
-											"endpoint = pm.collectionVariables.get('endpoint');\r",
-											"pm.sendRequest(`${endpoint}/volumes?q=${data.qData}`, (error, response) => {\r",
-											"    console.log(error ? error : \"Request ok\");\r",
-											"    pm.variables.set('startIndex', response.json().totalItems + 1)\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{endpoint}}/volumes?q={{qData}}&startIndex={{startIndex}}",
-									"host": [
-										"{{endpoint}}"
-									],
-									"path": [
-										"volumes"
-									],
-									"query": [
-										{
-											"key": "q",
-											"value": "{{qData}}"
-										},
-										{
-											"key": "startIndex",
-											"value": "{{startIndex}}"
-										},
-										{
-											"key": "key",
-											"value": "{{API_KEY}}",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "[S007] langRestrict",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"if(data.scenario === \"S007\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"    const items = pm.response.json().items;\r",
-											"    \r",
-											"    pm.test(`[S007C001] Response returns items with language \"${data.langRestrict}\"`, () => {\r",
-											"        items.forEach(item => {\r",
-											"            pm.expect(item.volumeInfo.language).to.eql(data.langRestrict);\r",
-											"        })\r",
-											"    })"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{endpoint}}/volumes?q={{qData}}&langRestrict={{langRestrict}}",
-									"host": [
-										"{{endpoint}}"
-									],
-									"path": [
-										"volumes"
-									],
-									"query": [
-										{
-											"key": "q",
-											"value": "{{qData}}"
-										},
-										{
-											"key": "langRestrict",
-											"value": "{{langRestrict}}"
-										}
-									]
-								}
-							},
-							"response": []
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
 						}
 					]
 				},
 				{
-					"name": "[S089] Error Res",
+					"name": "[S502] : CRUD flow",
 					"item": [
 						{
-							"name": "[S089] Invalid Parameters",
+							"name": "[S502a] Empty test bookshelf",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"switch(data.testCase) {\r",
-											"    case \"C001\" :\r",
-											"        pm.test(`[S089C001] Response is code \"400\" with error msg containing \"${data.expected.msgPart}\" for ${data.parameter} value of \"${data.value}\"`, () => {\r",
-											"            pm.response.to.have.status(400);\r",
-											"            pm.expect(pm.response.json()).to.have.property('error');\r",
-											"            pm.expect(pm.response.json().error).to.have.property('message');\r",
-											"            pm.expect(pm.response.json().error.message).includes(data.expected.msgPart)\r",
-											"        })\r",
-											"    break;\r",
-											"    default:\r",
-											"    \r",
-											"}"
+											"pm.test(`[S502aC001] Response has status 200`, ()=> {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(`[S502a002] Response to be empty object`, ()=> {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"    pm.expect(pm.response.json().length).to.be.undefined;\r",
+											"})\r",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -726,9 +1815,75 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"if(data.scenario === \"S089\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}"
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/clearVolumes?key={{apiKey}}",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"mylibrary",
+										"bookshelves",
+										"{{bookshelfId}}",
+										"clearVolumes"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{apiKey}}"
+										}
+									]
+								},
+								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has no content | 1 |"
+							},
+							"response": []
+						},
+						{
+							"name": "[S502b] Consult bookshelf",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(`[S502bC001] Response has status 200`, ()=> {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(`[S502bC002] Response to be object with \"kind\" and \"totalItems\" properties`, ()=> {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"    pm.expect(pm.response.json()).to.have.property('kind');\r",
+											"    pm.expect(pm.response.json()).to.have.property('totalItems');\r",
+											"    pm.expect(pm.response.json().kind).to.eql('books#volumes');\r",
+											"})\r",
+											"\r",
+											"pm.test(`[S502bC003] Response \"totalItems\" = 0`, ()=> {\r",
+											"    pm.expect(pm.response.json().totalItems).to.eql(0);\r",
+											"})\r",
+											"\r",
+											"pm.collectionVariables.set('initialTotalItemsOfBookshelf', pm.response.json().totalItems)"
 										],
 										"type": "text/javascript"
 									}
@@ -738,94 +1893,187 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/volumes?q={{qData}}&{{parameter}}={{value}}",
+									"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/volumes?{{bookId}}key={{apiKey}}",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
+										"mylibrary",
+										"bookshelves",
+										"{{bookshelfId}}",
 										"volumes"
 									],
 									"query": [
 										{
-											"key": "q",
-											"value": "{{qData}}"
-										},
-										{
-											"key": "{{parameter}}",
-											"value": "{{value}}"
+											"key": "{{bookId}}key",
+											"value": "{{apiKey}}"
 										}
 									]
-								}
+								},
+								"description": "### Test Scenario : [S502b] consult bookshelf ###\n\n### 3 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has all expected properties | 1 |\n| ```[C003]``` | Response has \"totalItems\" set to 0 | 1 |"
 							},
 							"response": []
-						}
-					]
-				}
-			],
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"[S00] response time is below 400ms\",() => {",
-							"    pm.expect(pm.response.responseTime).to.be.below(400);",
-							"});"
-						]
-					}
-				}
-			]
-		},
-		{
-			"name": "GET BOOK",
-			"item": [
-				{
-					"name": "[S101] BASICS",
-					"item": [
+						},
 						{
-							"name": "[S101] Critical Tests",
+							"name": "[S502c] Add book to bookshelf",
 							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"if(data.scenario === \"S101\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								},
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"[S101C001] response has 200 status\",() => {\r",
+											"pm.test(`[S502cC001] Response has status 200`, ()=> {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
 											"\r",
-											"pm.test(\"[S101C002] Content-Type is present and is JSON\",() => {\r",
-											"    pm.response.to.have.header(\"Content-Type\");\r",
-											"    pm.response.to.be.json;\r",
+											"pm.test(`[S502cC002] Response to be empty object`, ()=> {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"    pm.expect(pm.response.json().length).to.be.undefined;\r",
 											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/addVolume?volumeId={{bookId}}&key={{apiKey}}",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"mylibrary",
+										"bookshelves",
+										"{{bookshelfId}}",
+										"addVolume"
+									],
+									"query": [
+										{
+											"key": "volumeId",
+											"value": "{{bookId}}"
+										},
+										{
+											"key": "key",
+											"value": "{{apiKey}}"
+										}
+									]
+								},
+								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has no content | 1 |"
+							},
+							"response": []
+						},
+						{
+							"name": "[S502d] Consult bookshelf",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(`[S502dC001] Response has status 200`, ()=> {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(`[S502dC002] Response to be object with \"kind\" and \"totalItems\" properties`, ()=> {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"    pm.expect(pm.response.json()).to.have.property('kind');\r",
+											"    pm.expect(pm.response.json()).to.have.property('totalItems');\r",
+											"    pm.expect(pm.response.json().kind).to.eql('books#volumes');\r",
+											"    pm.expect(pm.response.json().totalItems).to.eq(pm.collectionVariables.get('initialTotalItemsOfBookshelf')+1);\r",
+											"})\r",
+											"\r",
+											"pm.test(`[S502dC003] Response \"totalItems\" = 1`, ()=> {\r",
+											"    pm.expect(pm.response.json().totalItems).to.eq(pm.collectionVariables.get('initialTotalItemsOfBookshelf')+1);\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/volumes?{{bookId}}key={{apiKey}}",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"mylibrary",
+										"bookshelves",
+										"{{bookshelfId}}",
+										"volumes"
+									],
+									"query": [
+										{
+											"key": "{{bookId}}key",
+											"value": "{{apiKey}}"
+										}
+									]
+								},
+								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has expected properties| 1 |\n| ```[C003]``` | Response has \"totalItems\" = 1| 1 |"
+							},
+							"response": []
+						},
+						{
+							"name": "[S502e] Consult book",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(`[S502eC001] Reponse has status 200`, ()=> {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
 											"\r",
 											"const response = pm.response.json()\r",
 											"\r",
-											"pm.test(`[S101C003] Response object has all expected properties`,() => {\r",
+											"pm.test(`[S502e002] Response object has all expected properties`,() => {\r",
 											"    pm.expect(response).to.be.an('object')\r",
 											"    pm.expect(response).to.have.property('kind');\r",
-											"    pm.expect(response.kind).to.eql('books#volume');\r",
-											"    pm.expect(response).to.have.property('volumeInfo');\r",
-											"    pm.expect(response.volumeInfo).to.be.an('object')\r",
+											"    pm.expect(response.kind).to.eql('books#volumes');\r",
+											"    pm.expect(response.items[0].volumeInfo.title).to.eql(data.expected.title)\r",
+											"    \r",
+											"});\r",
+											"\r",
+											"pm.test(`[S502e003] Response object has uniq item with \"id\" = ${data.bookId} and \"title\" = ${data.expected.title}`,() => {\r",
+											"    pm.expect(response.items[0].id).to.eql(data.bookId);\r",
+											"    pm.expect(response.items[0].volumeInfo.title).to.eql(data.expected.title);\r",
 											"});\r",
 											""
 										],
@@ -837,32 +2085,101 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/volumes/{{bookId}}",
+									"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/volumes?{{bookId}}key={{apiKey}}",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
-										"volumes",
-										"{{bookId}}"
+										"mylibrary",
+										"bookshelves",
+										"{{bookshelfId}}",
+										"volumes"
+									],
+									"query": [
+										{
+											"key": "{{bookId}}key",
+											"value": "{{apiKey}}"
+										}
 									]
-								}
+								},
+								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has expected properties| 1 |\n| ```[C003]``` | Response has one item which id and title matches book from [S502c]| 1 |"
 							},
 							"response": []
-						}
-					]
-				},
-				{
-					"name": "[S102...] Content Check",
-					"item": [
+						},
 						{
-							"name": "[S102] Check content",
+							"name": "[S502f] Remove book from bookshelf",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(`[S502fC001] Response has status 200`, ()=> {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(`[S502f002] Response to be empty object`, ()=> {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"    pm.expect(pm.response.json().length).to.be.undefined;\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/removeVolume?volumeId={{bookId}}&key={{apiKey}}",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"mylibrary",
+										"bookshelves",
+										"{{bookshelfId}}",
+										"removeVolume"
+									],
+									"query": [
+										{
+											"key": "volumeId",
+											"value": "{{bookId}}"
+										},
+										{
+											"key": "key",
+											"value": "{{apiKey}}"
+										}
+									]
+								},
+								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has no content | 1 |"
+							},
+							"response": []
+						},
+						{
+							"name": "[S502g] Consult bookshelf",
 							"event": [
 								{
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"if(data.scenario === \"S102\") {\r",
-											"    postman.setNextRequest(null)\r",
+											"if(data.scenario === \"S502\") {",
+											"    postman.setNextRequest(null)",
 											"}"
 										],
 										"type": "text/javascript"
@@ -872,56 +2189,25 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"[S102C001] Response id matches request id\",() => {\r",
-											"    pm.expect(pm.response.json().id).to.eql(data.bookId)\r",
-											"});\r",
+											"pm.test(`[S502gC001] Reponse has status 200`, ()=> {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
 											"\r",
-											"pm.test(`[S102C002] Response title matches ${data.expected.title}`,() => {\r",
-											"    pm.expect(pm.response.json().volumeInfo.title).to.eql(data.expected.title)\r",
-											"});\r",
+											"const initialTotalItemsOfBookshelf = pm.collectionVariables.get('initialTotalItemsOfBookshelf')\r",
 											"\r",
-											"pm.test(\"[S102C003] Response image link is valid and pointing to an image\",() => {\r",
-											"    pm.expect(pm.response.json().volumeInfo).to.have.property('imageLinks');\r",
-											"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');\r",
-											"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;\r",
-											"    pm.expect(imageUrl).to.be.a('string');\r",
-											"    pm.expect(imageUrl).includes('http');\r",
-											"    if(imageUrl) {\r",
-											"        pm.sendRequest(imageUrl, (error, response) => {\r",
-											"            console.log(error ? error : \"image request ok\")\r",
-											"            pm.expect(response.code).to.eql(200);\r",
-											"            pm.expect(response.headers.get('Content-Type')).includes('image')\r",
+											"pm.test(`[S502gC002] total Items of bookshelf is back to ${initialTotalItemsOfBookshelf}`, ()=> {\r",
+											"    pm.expect(pm.response.json().totalItems).to.eql(initialTotalItemsOfBookshelf)\r",
+											"})\r",
+											"pm.test(`[S502gC003] bookId ${data.bookId} is no longer present in bookshelf list`, () => {\r",
+											"    if(pm.response.json().items) {\r",
+											"        pm.response.json().items.forEach(item => {\r",
+											"            pm.expect(item.id).to.not.eql(data.bookId);\r",
 											"        })\r",
+											"    } else {\r",
+											"        pm.expect(pm.response.json()).to.not.have.property('items');\r",
 											"    }\r",
-											"});\r",
-											"\r",
-											"pm.test(\"[S102C004] Response preview link is valid and pointing to an html page\",() => {\r",
-											"    pm.expect(pm.response.json().volumeInfo).to.have.property('previewLink');\r",
-											"    const previewUrl = pm.response.json().volumeInfo.previewLink;\r",
-											"    pm.expect(previewUrl).to.be.a('string');\r",
-											"    pm.expect(previewUrl).includes('http');\r",
-											"    if(previewUrl) {\r",
-											"        pm.sendRequest(previewUrl, (error, response) => {\r",
-											"            console.log(error ? error : \"link request ok\")\r",
-											"            pm.expect(response.code).to.eql(200);\r",
-											"            pm.expect(response.headers.get('Content-Type')).includes('html')\r",
-											"        })\r",
-											"    }\r",
-											"});\r",
-											"\r",
-											"pm.test(\"[S102C005] Response info link is valid and pointing to an html page\",() => {\r",
-											"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');\r",
-											"    const infoUrl = pm.response.json().volumeInfo.infoLink;\r",
-											"    pm.expect(infoUrl).to.be.a('string');\r",
-											"    pm.expect(infoUrl).includes('http');\r",
-											"    if(infoUrl) {\r",
-											"        pm.sendRequest(infoUrl, (error, response) => {\r",
-											"            console.log(error ? error : \"link request ok\")\r",
-											"            pm.expect(response.code).to.eql(200);\r",
-											"            pm.expect(response.headers.get('Content-Type')).includes('html')\r",
-											"        })\r",
-											"    }\r",
-											"});"
+											"})\r",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -931,68 +2217,52 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{endpoint}}/volumes/{{bookId}}",
+									"raw": "{{endpoint}}/mylibrary/bookshelves/{{bookshelfId}}/volumes?key={{apiKey}}",
 									"host": [
 										"{{endpoint}}"
 									],
 									"path": [
-										"volumes",
-										"{{bookId}}"
+										"mylibrary",
+										"bookshelves",
+										"{{bookshelfId}}",
+										"volumes"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{apiKey}}"
+										}
 									]
-								}
+								},
+								"description": "### 3 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has totalItems back to [S502b] value | 1 |\n| ```[C003]``` | Response has no longer an item of id \"B3hOv6y9_dcC\"| 1 |"
 							},
 							"response": []
 						}
-					]
-				},
-				{
-					"name": "[S189] Error Res",
-					"item": [
+					],
+					"description": "This scenario challenges a use case where the service is requested for a bookshelf, a book is added to it, then consulted, then retrieved.\n\n### Test Scenario : [S502a] Empty test bookshelf ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to consult, and manipulate my bookshelf|\n|```THEN```|**I should get a valid responses reflecting my actions** |\n\n#### Datas : ####\n- ```bookshelfId```= \"1001\"\n- ```bookId```=\"B3hOv6y9_dcC\"",
+					"event": [
 						{
-							"name": "[S189] Wrong ID",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"if(data.scenario === \"S189\") {\r",
-											"    postman.setNextRequest(null)\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(`[S189C001] Response has 503 status code`, () => {\r",
-											"    pm.response.to.have.status(503);\r",
-											"})"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{endpoint}}/volumes/{{bookId}}&key={{API_KEY}}",
-									"host": [
-										"{{endpoint}}"
-									],
-									"path": [
-										"volumes",
-										"{{bookId}}&key={{API_KEY}}"
-									]
-								}
-							},
-							"response": []
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
 						}
 					]
 				}
 			],
+			"description": "### This folder contains a set of REGRESSION TESTS on specific Use Cases : ###\n\n- **Use Case 1 :** As the client I want to request for 1 book out of a book list I requested, in order to get informations about this book. [S201]\n\nEach request has a performance test challenging response speed, and format :\n\n### TEST SCENARIO : [S00Time] Response Time\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in less than 400ms** |\n\n### TEST SCENARIO : [S00json] response format is JSON\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in JSON format** |",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -1008,17 +2278,18 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"pm.test(\"[S00] response time is below 400ms\",() => {",
+							"pm.test(\"[S00time] response time is below 400ms\",() => {",
 							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});",
+							"",
+							"pm.test(\"[S00json] response format is JSON\",() => {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.response.to.be.json;",
 							"});"
 						]
 					}
 				}
 			]
-		},
-		{
-			"name": "User Stories",
-			"item": []
 		},
 		{
 			"name": "sandbox",
@@ -1027,52 +2298,134 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"    const items = pm.response.json().items;",
-							"    ",
-							"    pm.test(`[S007C001] Response returns items with language \"${data.langRestrict}\"`, () => {",
-							"        items.forEach(item => {",
-							"            pm.expect(item.volumeInfo.language).to.eql('en');",
+							"pm.test(\"[S201bC001] response has 200 status\",() => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"[S201bC002] Content-Type is present and is JSON\",() => {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"const response = pm.response.json()",
+							"",
+							"pm.test(`[S201bC003] Response object has all expected properties`,() => {",
+							"    pm.expect(response).to.be.an('object')",
+							"    pm.expect(response).to.have.property('kind');",
+							"    pm.expect(response.kind).to.eql('books#volume');",
+							"    pm.expect(response).to.have.property('volumeInfo');",
+							"    pm.expect(response.volumeInfo).to.be.an('object')",
+							"});",
+							"",
+							"pm.test(\"[S201bC004] Response id matches request id\",() => {",
+							"    pm.expect(pm.response.json().id).to.eql(variables.get('bookId'))",
+							"});",
+							"",
+							"pm.test(`[S201bC005] Response title matches`,() => {",
+							"    pm.expect(pm.response.json().volumeInfo.title).to.eql('Bacchantes')",
+							"});",
+							"",
+							"pm.test(\"[S201bC006] Response image link is valid and pointing to an image\",() => {",
+							"    pm.expect(pm.response.json().volumeInfo).to.have.property('imageLinks');",
+							"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');",
+							"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;",
+							"    pm.expect(imageUrl).to.be.a('string');",
+							"    pm.expect(imageUrl).includes('http');",
+							"    if(imageUrl) {",
+							"        pm.sendRequest(imageUrl, (error, response) => {",
+							"            console.log(error ? error : \"image request ok\")",
+							"            pm.expect(response.code).to.eql(200);",
+							"            pm.expect(response.headers.get('Content-Type')).includes('image')",
 							"        })",
-							"    })",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"[S201bC007] Response preview link is valid and pointing to an html page\",() => {",
+							"    pm.expect(pm.response.json().volumeInfo).to.have.property('previewLink');",
+							"    const previewUrl = pm.response.json().volumeInfo.previewLink;",
+							"    pm.expect(previewUrl).to.be.a('string');",
+							"    pm.expect(previewUrl).includes('http');",
+							"    if(previewUrl) {",
+							"        pm.sendRequest(previewUrl, (error, response) => {",
+							"            console.log(error ? error : \"link request ok\")",
+							"            pm.expect(response.code).to.eql(200);",
+							"            pm.expect(response.headers.get('Content-Type')).includes('html')",
+							"        })",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"[S201bC008] Response info link is valid and pointing to an html page\",() => {",
+							"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');",
+							"    const infoUrl = pm.response.json().volumeInfo.infoLink;",
+							"    pm.expect(infoUrl).to.be.a('string');",
+							"    pm.expect(infoUrl).includes('http');",
+							"    if(infoUrl) {",
+							"        pm.sendRequest(infoUrl, (error, response) => {",
+							"            console.log(error ? error : \"link request ok\")",
+							"            pm.expect(response.code).to.eql(200);",
+							"            pm.expect(response.headers.get('Content-Type')).includes('html')",
+							"        })",
+							"    }",
+							"});",
 							""
 						],
 						"type": "text/javascript"
 					}
 				}
 			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
 			"request": {
 				"auth": {
 					"type": "oauth2",
 					"oauth2": [
 						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "accessToken",
+							"value": "ya29.a0AfH6SMBRyDOijyvy15oYZJBk4g6PvhsGvFHmmslJaFU2XPjL63waWprK_2bZMYS8Owr6AYBfd9yFloVAO9zLjXaLM0p-XC1Rts-rVdr7lwJT-tvP9wfNu9fOLw_1A5uROTg1JcldsbTQGret_tfkomsz5JJY6A",
+							"type": "string"
+						},
+						{
 							"key": "addTokenTo",
-							"value": "queryParams",
+							"value": "header",
 							"type": "string"
 						}
 					]
 				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Length",
+						"value": "CONTENT_LENGTH",
+						"type": "text",
+						"disabled": true
+					}
+				],
 				"url": {
-					"raw": "{{endpoint}}/volumes?q=monsieur&langRestrict=en&maxResults=5",
+					"raw": "{{endpoint}}/mylibrary/bookshelves/1001/92_C6N0Kq_oC?key={{apiKey}}",
 					"host": [
 						"{{endpoint}}"
 					],
 					"path": [
-						"volumes"
+						"mylibrary",
+						"bookshelves",
+						"1001",
+						"92_C6N0Kq_oC"
 					],
 					"query": [
 						{
-							"key": "q",
-							"value": "monsieur"
-						},
-						{
-							"key": "langRestrict",
-							"value": "en"
-						},
-						{
-							"key": "maxResults",
-							"value": "5"
+							"key": "key",
+							"value": "{{apiKey}}"
 						}
 					]
 				}
@@ -1080,6 +2433,66 @@
 			"response": []
 		}
 	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "accessTokenUrl",
+				"value": "https://accounts.google.com/o/oauth2/token",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "https://accounts.google.com/o/oauth2/auth",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "https://www.getpostman.com/oauth2/callback",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "googleAuth",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "{{clientScope}}",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{clientSecret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{clientId}}",
+				"type": "string"
+			},
+			{
+				"key": "tokenType",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "accessToken",
+				"value": "ya29.a0AfH6SMCGcLK6NqSuLgnX0_3hLF50pFnM4jxkGQPP5yIyNcS1LFHPbqPuLLBgY1aA06swBLoQDRuLMFFdGYbvWu_lcG9VHk6jUp7Gqs29UhZB5zXHYZcA1q_WsmVTwExEz7Xdw4C_11eWxU8RSgr9Z0jOMj0scA",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -1102,10 +2515,6 @@
 	],
 	"variable": [
 		{
-			"key": "API_KEY",
-			"value": "AIzaSyBZqLcuZjc-md5f55yCg1HPhsEwXYUaKKc"
-		},
-		{
 			"key": "endpoint",
 			"value": "https://www.googleapis.com/books/v1"
 		},
@@ -1119,6 +2528,10 @@
 		},
 		{
 			"key": "bookIdIndexWithoutOffset",
+			"value": ""
+		},
+		{
+			"key": "initialTotalItemsOfBookshelf",
 			"value": ""
 		}
 	]

@@ -144,7 +144,76 @@
         "bookId": "wrongId"
     },
     {
-        "scenario": "S201a",
+        "scenario": "S201",
+        "testCase": "C001",
+        "bookshelfId": "1"
+    },
+    {
+        "scenario": "S202",
+        "testCase": "C001",
+        "bookshelfId": "0",
+        "expected": 
+        {
+            "bookshelfTitle": "Favorites",
+            "access": "PUBLIC"
+        }
+    },
+    {
+        "scenario": "S202",
+        "testCase": "C001",
+        "bookshelfId": "1001",
+        "expected": 
+        {
+            "bookshelfTitle": "test",
+            "access": "PUBLIC"
+        }
+    },
+    {
+        "scenario": "S202",
+        "testCase": "C001",
+        "bookshelfId": "3",
+        "expected": 
+        {
+            "bookshelfTitle": "Reading now",
+            "access": "PUBLIC"
+        }
+    },
+    {
+        "scenario": "S203",
+        "testCase": "C001",
+        "bookshelfId": "1001",
+        "bookId": "92_C6N0Kq_oC"
+    },
+    {
+        "scenario": "S204",
+        "testCase": "C001",
+        "bookshelfId": "1001",
+        "bookId": "92_C6N0Kq_oC"
+    },
+    {
+        "scenario": "S289",
+        "testCase": "C001",
+        "bookshelfId": "1001"
+    },
+    {
+        "scenario": "S290",
+        "testCase": "C001",
+        "bookshelfId": "1001",
+        "key": "abc"
+    },
+    {
+        "scenario": "S291",
+        "testCase": "C001",
+        "bookshelfId": "abc"
+    },
+    {
+        "scenario": "S292",
+        "testCase": "C001",
+        "bookshelfId": "1",
+        "bookId": "92_C6N0Kq_oC"
+    },
+    {
+        "scenario": "S501a",
         "qScope": "inauthor",
         "qData": "Céline Minard",
         "maxResults": "5",
@@ -156,10 +225,19 @@
         }
     },
     {
-        "scenario": "S201b",
+        "scenario": "S501b",
         "expected": 
         {
             "title": "Bacchantes"
+        }
+    },
+    {
+        "scenario": "S502",
+        "bookshelfId" : "1001",
+        "bookId":"B3hOv6y9_dcC",
+        "expected": 
+        {
+            "title": "Akim-foo"
         }
     }
     
