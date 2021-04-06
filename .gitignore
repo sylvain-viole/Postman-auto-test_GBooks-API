@@ -1,4 +1,6 @@
 TEST.postman_environment.json
 testScript.sh
 /.vscode
+.DS_Store
+
 
