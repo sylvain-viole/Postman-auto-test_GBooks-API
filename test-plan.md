@@ -1,7 +1,7 @@
 # TEST PLAN
 
 ## INTRODUCTION
-The product being tested is the GOOGLE BOOKS API on behalf of the CITY OF ARCACHON in order to ensure non-regression over there PUBLIC LIBRARY WEB SERVICE.
+The product being tested is the GOOGLE BOOKS API in order to ensure integration/non-regression over a PUBLIC LIBRARY WEB SERVICE.
 
 ## OBJECTIVES and TASKS
 
@@ -12,13 +12,14 @@ The product being tested is the GOOGLE BOOKS API on behalf of the CITY OF ARCACH
 ### TASKS :
 
 - Design and deploy an automated non regression test suite challenging the routes used by the client's web service,
-- Run TEST SUITE before each app's iteration deployment,
+- Run TESTS SUITE,
 - Report TESTS RESULTS.
 
 ## In/Out SCOPE :
 
 ### IN scope :
 - Integration test between client's web service and google books API
+- Performance test on the response speed 
 
 ### OUT of scope :
 
@@ -30,15 +31,11 @@ The product being tested is the GOOGLE BOOKS API on behalf of the CITY OF ARCACH
 
 **Participants** : 
 - All steps from design to execution, report and analysis will be handled by SYLVAIN VIOLE.
-- Final decision of deployment is made by the final Client.
-
-**Methodology** :
-- For each ROUTE used by the client's web service :
-  - Iterativ challenge of the route using DDT. Assertions included in the external data file.
-
 ## Technical background :
 
 **SOFTWARE** : [POSTMAN v8.0.7](https://www.postman.com/), [NewMan Cli Tool](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/), [HTMLextra reports extension](https://github.com/DannyDainton/newman-reporter-htmlextra)
+
+
 **ENVIRONNEMENT** : All tests will be run on a TEST environnement.
 
 ## Schedule / Reporting / Risks :

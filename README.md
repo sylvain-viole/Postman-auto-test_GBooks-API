@@ -3,10 +3,8 @@
 ### This repo hosts a test package (documentation and scripts) for the google books API.
 
 - **Author** : Sylvain Viole
-- (fictiv) **Client** : City of Arcachon
-
 ## Purpose :
-- Design and deploy a automated non-regression test strategy on the [Google Books API](https://developers.google.com/books/)
+- Design and deploy an automated non-regression test suite on the [Google Books API](https://developers.google.com/books/)
 
 ## How to :
 
