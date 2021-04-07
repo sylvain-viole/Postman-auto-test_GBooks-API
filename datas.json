@@ -1,102 +1,145 @@
 [
     {
         "scenario": "S001",
+        "iteration": 1,
         "testCase": "C001",
         "qData": "arcachon",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S002",
+        "iteration": 1,
         "testCase": "C001",
         "qScope": "intitle",
         "qData": "arcachon",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S002",
+        "iteration": 1,
         "testCase": "C002",
         "qScope": "inauthor",
         "qData": "arcachon",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },    {
         "scenario": "S002",
+        "iteration": 1,
         "testCase": "C003",
         "qScope": "isbn",
         "qData": "9781428925168",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S003",
+        "iteration": 1,
         "testCase": "C001",
         "qData": "balloon",
         "orderBy" : "relevance",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S003",
+        "iteration": 1,
         "testCase": "C002",
         "qData": "balloon",
         "orderBy" : "newest",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S004",
+        "iteration": 1,
         "testCase": "C001",
         "qData": "arcachon",
         "maxResults" : "20",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S004",
+        "iteration": 2,
         "testCase": "C001",
         "qData": "arcachon",
         "maxResults" : "40",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S004",
+        "iteration": 1,
         "testCase": "C002",
         "qData": "arcachon",
         "maxResults" : "0",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S005",
+        "iteration": 1,
         "testCase": "C001",
         "qData": "arcachon",
         "startIndex" : "1",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S006",
+        "iteration": 1,
         "testCase": "C001",
         "qData": "arcachon",
         "startIndex" : "1000000",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S007",
+        "iteration": 1,
         "testCase": "C001",
         "qData": "monsieur",
         "langRestrict" : "fr",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S007",
+        "iteration": 2,
         "testCase": "C001",
         "qData": "mister",
         "langRestrict" : "en",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S007",
+        "iteration": 3,
         "testCase": "C001",
         "qData": "da",
         "langRestrict" : "no",
-        "expected": {}
+        "expected": {
+            "kind" : "books#volumes"
+        }
     },
     {
         "scenario": "S089",
+        "iteration": 1,
         "testCase": "C001",
         "qData": "arcachon",
         "parameter" : "orderBy",
@@ -109,7 +152,8 @@
     },
     {
         "scenario": "S089",
-        "testCase": "C001",
+        "iteration": 1,
+        "testCase": "C002",
         "qData": "arcachon",
         "parameter" : "maxResults",
         "value" : "xxx",
@@ -121,7 +165,8 @@
     },
     {
         "scenario": "S089",
-        "testCase": "C001",
+        "iteration": 1,
+        "testCase": "C003",
         "qData": "arcachon",
         "parameter" : "startIndex",
         "value" : "xxx",
@@ -133,74 +178,94 @@
     },
     {
         "scenario": "S101",
+        "iteration" : 1,
+        "testCase" : "C001",
         "bookId": "B3hOv6y9_dcC",
         "expected": 
         {
+            "kind": "books#volume",
             "title": "Akim-foo"
         }
     },
     {
         "scenario": "S102",
+        "iteration" : 1,
         "bookId": "B3hOv6y9_dcC",
         "expected": 
         {
+            "kind": "books#volume",
             "title": "Akim-foo"
         }
     },
     {
         "scenario": "S102",
+        "iteration" : 2,
         "bookId": "92_C6N0Kq_oC",
         "expected": 
         {
+            "kind": "books#volume",
             "title": "Notre-Dame d'Arcachon"
         }
     },
     {
         "scenario": "S189",
+        "iteration" : 1,
         "testCase": "C001",
         "bookId": "wrongId",
-        "expected": {
+        "expected": 
+        {
             "code": 401
         }
     },
     {
         "scenario": "S201",
+        "iteration" : 1,
         "testCase": "C001",
         "bookshelfId": "1",
-        "expected": {}
+        "expected": 
+        {
+            "kind": "books#bookshelf"
+        }
     },
     {
         "scenario": "S202",
+        "iteration" : 1,
         "testCase": "C001",
         "bookshelfId": "0",
         "expected": 
         {
+            "kind": "books#bookshelf",
             "bookshelfTitle": "Favorites",
             "access": "PUBLIC"
         }
     },
     {
         "scenario": "S202",
+        "iteration" : 2,
         "testCase": "C001",
         "bookshelfId": "1001",
         "expected": 
         {
+            "kind": "books#bookshelf",
             "bookshelfTitle": "test",
             "access": "PUBLIC"
         }
     },
     {
         "scenario": "S202",
+        "iteration" : 3,
         "testCase": "C001",
         "bookshelfId": "3",
         "expected": 
         {
+            "kind": "books#bookshelf",
             "bookshelfTitle": "Reading now",
             "access": "PUBLIC"
         }
     },
     {
         "scenario": "S203",
+        "iteration" : 1,
         "testCase": "C001",
         "bookshelfId": "1001",
         "bookId": "92_C6N0Kq_oC",
@@ -208,6 +273,7 @@
     },
     {
         "scenario": "S204",
+        "iteration" : 1,
         "testCase": "C001",
         "bookshelfId": "1001",
         "bookId": "92_C6N0Kq_oC",
@@ -215,6 +281,7 @@
     },
     {
         "scenario": "S289",
+        "iteration" : 1,
         "testCase": "C001",
         "bookshelfId": "1001",
         "expected": {
@@ -223,6 +290,7 @@
     },
     {
         "scenario": "S290",
+        "iteration" : 1,
         "testCase": "C001",
         "bookshelfId": "1001",
         "key": "abc",
@@ -232,6 +300,7 @@
     },
     {
         "scenario": "S291",
+        "iteration" : 1,
         "testCase": "C001",
         "bookshelfId": "abc",
         "expected": {
@@ -240,6 +309,7 @@
     },
     {
         "scenario": "S292",
+        "iteration" : 1,
         "testCase": "C001",
         "bookshelfId": "1",
         "bookId": "92_C6N0Kq_oC",
@@ -249,6 +319,7 @@
     },
     {
         "scenario": "S501a",
+        "iteration" : 1,
         "qScope": "inauthor",
         "qData": "Céline Minard",
         "maxResults": "5",
@@ -256,22 +327,27 @@
         "orderBy": "newest",
         "expected": 
         {
+            "kind": "books#volumes",
             "author": "minard"
         }
     },
     {
         "scenario": "S501b",
+        "iteration" : 1,
         "expected": 
         {
+            "kind": "books#volume",
             "title": "Bacchantes"
         }
     },
     {
         "scenario": "S502",
+        "iteration" : 1,
         "bookshelfId" : "1001",
         "bookId":"B3hOv6y9_dcC",
         "expected": 
         {
+            "kind": "books#bookshelf",
             "title": "Akim-foo"
         }
     }

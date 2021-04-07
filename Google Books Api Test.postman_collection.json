@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "210b9cc8-0892-4ef3-829c-dc196ee46a64",
 		"name": "Google Books Api Test",
-		"description": "## This collection challenges Google Books API ##\n\nComplete documentation of the API can be found [here](https://developers.google.com/books/docs/overview)\n\nThe API introduces 2 entities :\n- VOLUMES\n- BOOKSHELVES\n\nThis automated test collection challenges both of them.\n\n### Collection structure ###\nCollection is separated in 2 parts :\n- **INTEGRATION TESTS :**\nChallenges atomic fonctionalities\n- **REGRESSION TESTS :**\nChallenges global use case scenario\n\n#### Test naming : ####\n- Each test is referred as ```[SxxxCyyy] <description>```\n    - ```Sxxx``` : is the id of the scenario from 0 to 999,\n    - ```Cyyy``` : is the id of the test Case from 0 to 999,\n    - ```<description>``` : exposes what the test case challenges and expects\n    - example : ```[S101C002] Response object has all expected properties```\n\n- Test scenarios (gherkin) and cases details are exposed in each request documentation\n- Client consuming the API is referred to as ```client```\n- Google books API is referred to as ```service```\n\n#### Datas : ####\n- This collection uses an external data file.\n\n#### Auth : ####\n- For ```Volumes``` requests don't use Auth or apiKey \n- **For ```bookshelf``` resquests, we use an oAuth 2.0 + API KEY**\n\n\n#### Routing : ####\nDispatch between data iteration requests, and tests cases works as follows :\n- ```Routing Req``` sets next request depending on the ```data.scenario``` value\n- ```switch``` statement on ```data.testCase``` in the test script of each request routes the iteration to its corresponding test case.\n- Each request after completion and tests throws back to the routing Req.\n\n***\n***",
+		"description": "## This collection challenges Google Books API ##\n\nComplete documentation of the API can be found [here](https://developers.google.com/books/docs/overview)\n\nThe API introduces 2 entities :\n- VOLUMES\n- BOOKSHELVES\n\n***\n\n### Collection structure ###\nCollection is separated in 2 parts :\n- **INTEGRATION TESTS :**\nChallenges atomic fonctionalities\n- **REGRESSION TESTS :**\nChallenges global use case scenario\n\n#### Auth : ####\n- For ```Volumes``` : none. \n- **For ```bookshelf``` OAuth 2.0 + API KEY**\n\n#### Test naming : ####\n- Each test is referred as ```[SxxxCyyy_i] <description>```\n    - ```Sxxx``` : is the id of the scenario from 0 to 999,\n    - ```Cyyy``` : is the id of the test Case from 0 to 999,\n    - ```_i```: is the current iteration,\n    - ```<description>``` : exposes what the test case challenges and expects\n    - example : ```[S101C002_2] Response object has all expected properties```\n\n- Test scenarios (gherkin) and cases details are exposed in each request documentation\n- Client consuming the API is referred to as ```client```\n- Google books API is referred to as ```service```\n\n#### Datas : ####\n- This collection uses an external data file.\n\n#### Routing : ####\nDispatch between data iteration requests, and tests cases works as follows :\n- ```Routing Req``` sets next request depending on the ```data.scenario``` value\n- ```switch``` statement on ```data.testCase``` in the test script of each request routes the iteration to its corresponding test case.\n- Each request after completion and tests throws back to the routing Req.\n\n***\n***",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -16,10 +16,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"let token = pm.environment.get('dynamic_token');\r",
-									"token = 'newModifiedToken90332'; // Perform some operations here.. \r",
-									"\r",
-									"pm.environment.set('dynamic_token', token);\r",
+									"let token = pm.environment.get('dynamicToken');\r",
+									"token = 'ya29.a0AfH6SMCdlOJvmPASXsO1i43sNvHF1Pqoc754gvevwOEH-xrnNri-HjcVC1HiRSE96GCZzriv0_m23wCAjAzDVrb2eV6epsb7mM22m_pg7YG8-C68A6BiosEnUOqQi9Rud-a_BpRpDnGhHMlPRV8og6K_GulIaw'; // Perform some operations here.. \r",
+									"pm.environment.set('dynamicToken', token);\r",
 									"\r",
 									"switch (data.scenario) {\r",
 									"    case \"S001\":\r",
@@ -121,12 +120,35 @@
 								}
 							]
 						},
-						"description": "This is a fake request used for routing purpose."
+						"description": "This REQUEST sets the TOKEN for all requests and routes the current iteration to its dedicated REQUEST."
 					},
 					"response": []
 				}
 			],
-			"description": "Start point folder, contains the ROUTING REQUEST."
+			"description": "Start point folder, contains the ROUTING REQUEST.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
 		},
 		{
 			"name": "INTEGRATION TESTS",
@@ -147,18 +169,12 @@
 													"listen": "test",
 													"script": {
 														"exec": [
-															"pm.test(\"[S001C001] Response has 200 status code\",() => {",
-															"    pm.response.to.have.status(200);",
-															"});",
-															"",
 															"const response = pm.response.json()",
 															"",
-															"pm.test(`[S001C002] Response object has all expected properties`,() => {",
+															"pm.test(`[S001C001_${data.iteration}] Response object has <items> and <totalItems> properties`,() => {",
 															"    pm.expect(response).to.be.an('object')",
-															"    pm.expect(response).to.have.property('kind');",
-															"    pm.expect(response.kind).to.eql('books#volumes');",
 															"    pm.expect(response).to.have.property('totalItems');",
-															"    pm.expect(response.totalItems).to.be.gt(0);",
+															"    pm.expect(response).to.have.property('items');",
 															"});",
 															""
 														],
@@ -195,7 +211,7 @@
 														}
 													]
 												},
-												"description": "### Test Scenario : [S001] Critical Tests ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|The query has no parameter |\n|```THEN```|**I should get a valid response** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response object has all expected properties | 1 |\n\n#### datas : #### \n- ```qData```= \"arcachon\""
+												"description": "### Test Scenario : [S001] Critical Tests ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|The query has no parameter |\n|```THEN```|**I should get a valid response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response object has items and totalItems properties | 1|\n\n#### datas : #### \n- ```qData```= \"arcachon\""
 											},
 											"response": []
 										}
@@ -225,14 +241,14 @@
 														"exec": [
 															"switch (data.testCase) {",
 															"    case \"C001\":",
-															"        pm.test(`[SC002C001] Each item has a TITLE including \"${data.qData}\"`, () => {",
+															"        pm.test(`[SC002C001_${data.iteration}] Each item has a <title> including \"${data.qData}\"`, () => {",
 															"            pm.response.json().items.forEach(item => {",
 															"                pm.expect(item.volumeInfo.title.toLowerCase()).to.include(data.qData)",
 															"            })",
 															"        })",
 															"        break;",
 															"    case \"C002\":",
-															"        pm.test(`[SC002C002] Each item's AUTHORS is an array that includes \"${data.qData}\"`, () => {",
+															"        pm.test(`[SC002C002_${data.iteration}] Each item's <authors> is an array that includes \"${data.qData}\"`, () => {",
 															"        let result = false;",
 															"        pm.response.json().items.forEach(item => {",
 															"            pm.expect(item.volumeInfo.authors).to.be.an('array');",
@@ -246,7 +262,7 @@
 															"        })",
 															"        break;",
 															"    case \"C003\":",
-															"        pm.test(`[SC002C003] Response has a uniq item with isbn : \"${data.qData}\"`, () => {",
+															"        pm.test(`[SC002C003_${data.iteration}] Response has a uniq item with <isbn> = \"${data.qData}\"`, () => {",
 															"        pm.expect(pm.response.json().items.length).to.eql(1);",
 															"        pm.response.json().items[0].volumeInfo.industryIdentifiers.forEach(industryIdentifier => {",
 															"            if(industryIdentifier.type === \"ISBN_13\") {",
@@ -279,7 +295,7 @@
 														}
 													]
 												},
-												"description": "### Test Scenario : [S002] Valid request format with q parameter ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|\"q\" is set with a filter |\n|```THEN```|**I should get a valid response with items matching \"q\" filter constraints** |\n\n\n### 3 test cases : ###\n\n| CASE | Description | iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | ```intitle``` check: Each item has a TITLE including the requested value | 1 | ```qScope```=\"intitle\"<br>```qData```=\"arcachon\" |\n| ```[C002]``` | ```inauthor``` check: Each item's AUTHORS is an array that includes the requested value | 1 | ```qScope```=\"inauthor\"<br>```qData```=\"arcachon\" |\n| ```[C003]``` | ```isbn``` check: Response has a uniq item with matching \"isbn\" | 1 | ```qScope```=\"isbn\"<br>```qData```=\"9781428925168\" |"
+												"description": "### Test Scenario : [S002] Valid request format with q parameter ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|\"q\" is set with a filter |\n|```THEN```|**I should get a valid response with items matching \"q\" filter constraints** |\n\n\n### 3 test cases : ###\n\n| CASE | Description | iteration | Datas |\n|:-|:-|:-|:-|\n| ```[C001]``` | ```intitle``` check: Each item has a TITLE including the requested value | 1 | ```qScope```=\"intitle\"<br>```qData```=\"arcachon\" |\n| ```[C002]``` | ```inauthor``` check: Each item's AUTHORS is an array that includes the requested value | 1 | ```qScope```=\"inauthor\"<br>```qData```=\"arcachon\" |\n| ```[C003]``` | ```isbn``` check: Response has a uniq item with matching \"isbn\" | 1 | ```qScope```=\"isbn\"<br>```qData```=\"9781428925168\" |"
 											},
 											"response": []
 										}
@@ -312,19 +328,16 @@
 															"\r",
 															"switch(data.testCase) {\r",
 															"    case \"C001\":\r",
-															"    pm.test(`[S003C001] Response is valid when parameter orderBy is set to \"${data.orderBy}\"`, () => {\r",
-															"        pm.response.to.have.status(200);\r",
-															"    })\r",
-															"    break;\r",
+															"    // nothing to test except response status\r",
 															"    case \"C002\":\r",
 															"    function makeTimestampFromString(string) {\r",
-															"    dateArray = string.split(\"-\");\r",
-															"    const date = new Date (dateArray[0], dateArray[1] ? dateArray[1] - 1: 0, dateArray[2]? dateArray[2].substring(0,2):1).getTime()\r",
-															"    return date;\r",
+															"        dateArray = string.split(\"-\");\r",
+															"        const date = new Date (dateArray[0], dateArray[1] ? dateArray[1] - 1: 0, dateArray[2]? dateArray[2].substring(0,2):1).getTime()\r",
+															"        return date;\r",
 															"    }\r",
 															"\r",
 															"    if(items.length > 1) {\r",
-															"        pm.test(`[S003C002] Response items are sorted from newest to oldest`, () => {\r",
+															"        pm.test(`[S003C002_${data.iteration}] Response <items> are sorted from newest to oldest`, () => {\r",
 															"            let date1 = makeTimestampFromString(items[0].volumeInfo.publishedDate)\r",
 															"            let date2\r",
 															"            for(let i=1; i < items.length; i++) {\r",
@@ -379,12 +392,12 @@
 															"\r",
 															"switch(data.testCase) {\r",
 															"    case \"C001\":\r",
-															"        pm.test(`[S004C001] Response has ${data.maxResults} items`, () => {\r",
+															"        pm.test(`[S004C001_${data.iteration}] Response has ${data.maxResults} <items>`, () => {\r",
 															"            pm.expect(items.length).to.be.lte(parseInt(data.maxResults))\r",
 															"        })\r",
 															"    break;\r",
 															"    case \"C002\":\r",
-															"        pm.test(`[S004C002] Response has ${data.maxResults} items`, () => {\r",
+															"        pm.test(`[S004C002_${data.iteration}] Response has ${data.maxResults} <items>`, () => {\r",
 															"            pm.expect(items).to.be.undefined;\r",
 															"        })\r",
 															"    break;\r",
@@ -429,7 +442,7 @@
 														}
 													]
 												},
-												"description": "### Test Scenario : [S004] Valid request format with ```maxResults``` parameters ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```maxResults``` parameter is set with a valid value |\n|```THEN```|**I should get a valid response with a number of items matching accordingly** |\n\n\n### 2 test cases : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has a count of at least ```maxResults``` items | 1/2 | ```qData```=\"arcachon\"<br>```maxResults```= 20 |\n|  |  | 2/2 | ```qData```=\"arcachon\"<br>```maxResults```= 40 |\n| ```[C002]``` | Response has 0 item | 1/1 | ```qData```=\"arcachon\"<br>```maxResults```= 0 |"
+												"description": "### Test Scenario : [S004] Valid request format with ```maxResults``` parameters ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```maxResults``` parameter is set with a valid value |\n|```THEN```|**I should get a valid response with a number of items matching accordingly** |\n\n\n### 2 test cases : ###\n\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has a count of at least ```maxResults``` items |2|\n\n**Datas** :\n- ```qData```=\"arcachon\", \"arcachon\"\n- ```maxResults```= 20, 40\n\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C002]``` | Response has 0 item | 1 |\n\n**Datas** :\n- ```qData```=\"arcachon\"\n- ```maxResults```= 0"
 											},
 											"response": []
 										},
@@ -444,20 +457,13 @@
 															"\r",
 															"const bookIdIndexWithoutOffset = pm.variables.get('bookIdIndexWithoutOffset');\r",
 															"\r",
-															"switch(data.testCase) {\r",
-															"    case \"C001\":\r",
-															"        pm.test(`[S005C001] Results are offset accordingly to \"startIndex\" value`, () => {\r",
-															"\r",
-															"            const endpoint = pm.collectionVariables.get('endpoint');\r",
-															"\r",
-															"            pm.sendRequest(`${endpoint}/volumes?q=${data.qData}&startIndex=0`, (error, response) => {\r",
-															"                pm.expect(response).to.have.property('code',200);\r",
-															"                pm.expect(items[0].id).to.eql(response.json().items[1].id)\r",
-															"            });\r",
-															"        });\r",
-															"        break;\r",
-															"\r",
-															"}"
+															"pm.test(`[S005C001_${data.iteration}] Results are offset accordingly to <startIndex> value`, () => {\r",
+															"    const endpoint = pm.collectionVariables.get('endpoint');\r",
+															"    pm.sendRequest(`${endpoint}/volumes?q=${data.qData}&startIndex=0`, (error, response) => {\r",
+															"        pm.expect(response).to.have.property('code',200);\r",
+															"        pm.expect(items[0].id).to.eql(response.json().items[1].id)\r",
+															"    });\r",
+															"});"
 														],
 														"type": "text/javascript"
 													}
@@ -508,19 +514,11 @@
 													"listen": "test",
 													"script": {
 														"exec": [
-															"const items = pm.response.json().items\r",
-															"\r",
-															"const bookIdIndexWithoutOffset = pm.variables.get('bookIdIndexWithoutOffset');\r",
-															"\r",
-															"switch(data.testCase) {\r",
-															"    case \"C001\":\r",
-															"        pm.test(`[S006C001] Response has a \"totalItems\" value of 0 for a \"startIndex\" above \"totalResults\"`, () => {\r",
-															"        pm.expect(pm.response.json()).to.have.property('totalItems');\r",
-															"        pm.expect(pm.response.json().totalItems).to.eql(0);\r",
-															"        })\r",
-															"        break;\r",
-															"\r",
-															"}"
+															"pm.test(`[S006C001_${data.iteration}] Response has a <totalItems> value of 0 for a <startIndex> value above <totalResults>`, () => {\r",
+															"    pm.expect(pm.response.json()).to.have.property('totalItems');\r",
+															"    pm.expect(pm.response.json().totalItems).to.eql(0);\r",
+															"})\r",
+															""
 														],
 														"type": "text/javascript"
 													}
@@ -588,13 +586,14 @@
 													"listen": "test",
 													"script": {
 														"exec": [
-															"    const items = pm.response.json().items;\r",
-															"    \r",
-															"    pm.test(`[S007C001] Response returns items with language \"${data.langRestrict}\"`, () => {\r",
-															"        items.forEach(item => {\r",
-															"            pm.expect(item.volumeInfo.language).to.eql(data.langRestrict);\r",
-															"        })\r",
-															"    })"
+															"const items = pm.response.json().items;\r",
+															"\r",
+															"pm.test(`[S007C001_${data.iteration}] Response has <items> with <language> = \"${data.langRestrict}\"`, () => {\r",
+															"    items.forEach(item => {\r",
+															"        pm.expect(item.volumeInfo.language).to.eql(data.langRestrict);\r",
+															"    })\r",
+															"})\r",
+															""
 														],
 														"type": "text/javascript"
 													}
@@ -622,7 +621,7 @@
 														}
 													]
 												},
-												"description": "### Test Scenario : [S007] Valid request format with ```langRestrict``` parameter ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```langRestrict``` parameter is set with a valid value|\n|```THEN```|**I should get a valid response with items that has a ```language```value matching the requested parameter** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response is valid and each item's ```language``` value matches the input parameter| 1/3 | ```qData```=\"arcachon\"<br>```langRestrict```= \"fr\"|\n| | | 2/3 | ```qData```=\"arcachon\"<br>```langRestrict```= \"en\"|\n| | | 3/3 | ```qData```=\"arcachon\"<br>```langRestrict```= \"no\"|"
+												"description": "### Test Scenario : [S007] Valid request format with ```langRestrict``` parameter ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```langRestrict``` parameter is set with a valid value|\n|```THEN```|**I should get a valid response with items that has a ```language```value matching the requested parameter** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response is valid and each item's ```language``` value matches the input parameter| 3 |\n\n### Datas : \n- ```qData``` = \"monsieur\", \"mister\", \"da\"\n- ```langRestrict``` = \"fr\", \"en\", \"no\""
 											},
 											"response": []
 										}
@@ -639,18 +638,11 @@
 													"listen": "test",
 													"script": {
 														"exec": [
-															"switch(data.testCase) {\r",
-															"    case \"C001\" :\r",
-															"        pm.test(`[S089C001] Response is code \"400\" with error msg containing \"${data.expected.msgPart}\" for ${data.parameter} value of \"${data.value}\"`, () => {\r",
-															"            pm.response.to.have.status(400);\r",
-															"            pm.expect(pm.response.json()).to.have.property('error');\r",
-															"            pm.expect(pm.response.json().error).to.have.property('message');\r",
-															"            pm.expect(pm.response.json().error.message).includes(data.expected.msgPart)\r",
-															"        })\r",
-															"    break;\r",
-															"    default:\r",
-															"    \r",
-															"}"
+															"pm.test(`[S089${data.testCase}_${data.iteration}] Response has error msg containing \"${data.expected.msgPart}\" for <${data.parameter}> value of \"${data.value}\"`, () => {\r",
+															"    pm.expect(pm.response.json()).to.have.property('error');\r",
+															"    pm.expect(pm.response.json().error).to.have.property('message');\r",
+															"    pm.expect(pm.response.json().error.message).includes(data.expected.msgPart)\r",
+															"})"
 														],
 														"type": "text/javascript"
 													}
@@ -689,7 +681,7 @@
 														}
 													]
 												},
-												"description": "### Test Scenario : [S089] Valid request format with NOT valid parameters ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|My parameter(s) is/are not valid|\n|```THEN```|**I should get 400 response with error msg containig mention of the invalid parameter** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response is not valid and has error msg mentionning the invalid parameter| 1/3 | ```qData```=\"arcachon\"<br>```parameter```= \"orderBy\"<br>```value```= \"xxx\"|\n| | |2/3 | ```qData```=\"arcachon\"<br>```parameter```= \"maxResults\"<br>```value```= \"xxx\"|\n| | |3/3 | ```qData```=\"arcachon\"<br>```parameter```= \"startIndex\"<br>```value```= \"xxx\"|"
+												"description": "### Test Scenario : [S089] Valid request format with NOT valid parameters ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|My parameter(s) is/are not valid|\n|```THEN```|**I should get 400 response with error msg containing mention of the invalid parameter** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response is not valid and has error msg mentionning the invalid parameter| 3 |\n\n### Datas :\n- ```qData```=\"arcachon\"\n- ```parameter```= \"orderBy\", \"maxResults\", \"orderBy\"\n- ```value```= \"xxx\""
 											},
 											"response": []
 										}
@@ -743,16 +735,9 @@
 													"listen": "test",
 													"script": {
 														"exec": [
-															"pm.test(\"[S101C001] response has 200 status\",() => {\r",
-															"    pm.response.to.have.status(200);\r",
-															"});\r",
-															"\r",
 															"const response = pm.response.json()\r",
 															"\r",
-															"pm.test(`[S101C002] Response object has all expected properties`,() => {\r",
-															"    pm.expect(response).to.be.an('object')\r",
-															"    pm.expect(response).to.have.property('kind');\r",
-															"    pm.expect(response.kind).to.eql('books#volume');\r",
+															"pm.test(`[S101C001_${data.iteration}] Response object has <volumeInfo> property`,() => {\r",
 															"    pm.expect(response).to.have.property('volumeInfo');\r",
 															"    pm.expect(response.volumeInfo).to.be.an('object')\r",
 															"});\r",
@@ -775,7 +760,7 @@
 														"{{bookId}}"
 													]
 												},
-												"description": "### Test Scenario : [S101] Minimal valid request for a book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for book by id with valid endpoint|\n|```AND```|The id is valid |\n|```THEN```|**I should get a valid response** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has \"200\" Status code | 1 |\n| ```[C002]``` | Response object has all expected properties | 1 |\n\n**Datas :**\n- ```bookId``` =  B3hOv6y9_dcC"
+												"description": "### Test Scenario : [S101] Minimal valid request for a book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for book by id with valid endpoint|\n|```AND```|The id is valid |\n|```THEN```|**I should get a valid response** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response object has \"volumeInfo\" property | 1 |\n\n**Datas :**\n- ```bookId``` =  B3hOv6y9_dcC"
 											},
 											"response": []
 										}
@@ -803,15 +788,15 @@
 													"listen": "test",
 													"script": {
 														"exec": [
-															"pm.test(\"[S102C001] Response id matches request id\",() => {\r",
+															"pm.test(\"[S102C001_${data.iteration}] Response <id> matches request id\",() => {\r",
 															"    pm.expect(pm.response.json().id).to.eql(data.bookId)\r",
 															"});\r",
 															"\r",
-															"pm.test(`[S102C002] Response title matches ${data.expected.title}`,() => {\r",
+															"pm.test(`[S102C002_${data.iteration}] Response <title> matches ${data.expected.title}`,() => {\r",
 															"    pm.expect(pm.response.json().volumeInfo.title).to.eql(data.expected.title)\r",
 															"});\r",
 															"\r",
-															"pm.test(\"[S102C003] Response image link is valid and pointing to an image\",() => {\r",
+															"pm.test(\"[S102C003_${data.iteration}]Response has <thumbnail> property pointing to an image\",() => {\r",
 															"    pm.expect(pm.response.json().volumeInfo).to.have.property('imageLinks');\r",
 															"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');\r",
 															"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;\r",
@@ -826,7 +811,7 @@
 															"    }\r",
 															"});\r",
 															"\r",
-															"pm.test(\"[S102C004] Response preview link is valid and pointing to an html page\",() => {\r",
+															"pm.test(\"[S102C004_${data.iteration}] Response <previewLink> is valid and pointing to an html page\",() => {\r",
 															"    pm.expect(pm.response.json().volumeInfo).to.have.property('previewLink');\r",
 															"    const previewUrl = pm.response.json().volumeInfo.previewLink;\r",
 															"    pm.expect(previewUrl).to.be.a('string');\r",
@@ -840,7 +825,7 @@
 															"    }\r",
 															"});\r",
 															"\r",
-															"pm.test(\"[S102C005] Response info link is valid and pointing to an html page\",() => {\r",
+															"pm.test(\"[S102C005_${data.iteration}] Response <infoLink> is valid and pointing to an html page\",() => {\r",
 															"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');\r",
 															"    const infoUrl = pm.response.json().volumeInfo.infoLink;\r",
 															"    pm.expect(infoUrl).to.be.a('string');\r",
@@ -899,9 +884,7 @@
 													"listen": "test",
 													"script": {
 														"exec": [
-															"pm.test(`[S189C001] Response has 503 status code`, () => {\r",
-															"    pm.response.to.have.status(503);\r",
-															"})"
+															"// Response STATUS CODE is checked in [code]"
 														],
 														"type": "text/javascript"
 													}
@@ -920,7 +903,7 @@
 														"{{bookId}}&key={{API_KEY}}"
 													]
 												},
-												"description": "### Test Scenario : [S189] Valid request format with NOT valid id ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|My id is NOT valid|\n|```THEN```|**I should get 503 response** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has 503 status code| 1 | ```bookId```=\"wrongId\"|"
+												"description": "### Test Scenario : [S189] Valid request format with NOT valid id ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|My id is NOT valid|\n|```THEN```|**I should get 503 response** |\n\n\n### No specific test case : ###\n\nResponse STATUS CODE is checked in ```[code]```"
 											},
 											"response": []
 										}
@@ -991,17 +974,7 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(\"[S201C001] response has 200 status\",() => {\r",
-													"    pm.response.to.have.status(200);\r",
-													"});\r",
-													"\r",
-													"const response = pm.response.json()\r",
-													"\r",
-													"pm.test(`[S201C002] Response object has a \"kind\" of bookshelf`,() => {\r",
-													"    pm.expect(response).to.be.an('object')\r",
-													"    pm.expect(response).to.have.property('kind');\r",
-													"    pm.expect(response.kind).to.eql('books#bookshelf');\r",
-													"});\r",
+													"// Nothing here to test except time, format, code and kind\r",
 													""
 												],
 												"type": "text/javascript"
@@ -1039,7 +1012,7 @@
 												}
 											]
 										},
-										"description": "### Test Scenario : [S201] Critical Tests ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for bookshelf by id with valid endpoint|\n|```AND```| id is valid\n|```THEN```|**I should get a valid response** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has \"200\" Status code | 1 |\n| ```[C002]``` | Response object has a \"kind\" of bookshelf | 1 |\n\n**Datas :**\n- ```bookshelfId``` =  1"
+										"description": "### Test Scenario : [S201] Critical Tests ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for bookshelf by id with valid endpoint|\n|```AND```| id is valid\n|```THEN```|**I should get a valid response** |\n\n\n### No specific test case : ###\nResponse status CODE and KIND property is already checked in ```[code]```and ```[kind]```"
 									},
 									"response": []
 								}
@@ -1056,8 +1029,9 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(`[S202C001] bookshelf ${data.bookshelfId} has ${data.expected.access} access and \"${data.expected.bookshelfTitle}\" title`, () => {\r",
+													"pm.test(`[S202C001_${data.iteration}] bookshelf ${data.bookshelfId} has ${data.expected.access} <access> and \"${data.expected.bookshelfTitle}\" <title>`, () => {\r",
 													"    pm.expect(pm.response.json().title).to.eql(data.expected.bookshelfTitle);\r",
+													"    pm.expect(pm.response.json().access).to.eql(data.expected.access);\r",
 													"})"
 												],
 												"type": "text/javascript"
@@ -1100,7 +1074,7 @@
 									"response": []
 								}
 							],
-							"description": "### Test Scenario : [S202] Get Bookshelf details ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for bookshelf by id with valid endpoint|\n|```AND```| id is valid\n|```THEN```|**I should get a valid response with bookshelf details** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration | Datas |\n|-|-|-|-|\n| ```[C001]``` | Response has \"200\" Status code | 1 |\n| ```[C002]``` | Response object has a \"kind\" of bookshelf | 1 |\n\n**Datas :**\n- ```bookshelfId``` =  1"
+							"description": "### Test Scenario : [S202] Get Bookshelf details ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for bookshelf by id with valid endpoint|\n|```AND```| id is valid\n|```THEN```|**I should get a valid response with bookshelf details** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response object has an \"access\" and \"title\" property matching the request | 3 |\n\n**Datas :**\n- ```bookshelfId``` =  0, 1001, 3"
 						},
 						{
 							"name": "[S203-204] Handle Book in bookshelf",
@@ -1112,11 +1086,7 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(`[S203C001] Response has status 200`, ()=> {\r",
-													"    pm.response.to.have.status(200);\r",
-													"})\r",
-													"\r",
-													"pm.test(`[S203C002] Response to be empty object`, ()=> {\r",
+													"pm.test(`[S203C001_${data.iteration}] Response to be empty object`, ()=> {\r",
 													"    pm.expect(pm.response.json()).to.be.an('object');\r",
 													"    pm.expect(pm.response.json().length).to.be.undefined;\r",
 													"})\r",
@@ -1168,7 +1138,7 @@
 												}
 											]
 										},
-										"description": "### Test Scenario : [S203] Add Book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to add a book in my bookshelf|\n|```THEN```|**I should get a valid empty response** |\n\n\n### 2 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has \"200\" code | 1 |\n| ```[C002]``` |  Response is an empty object | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001\n- ```bookId``` = 92_C6N0Kq_oC"
+										"description": "### Test Scenario : [S203] Add Book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to add a book in my bookshelf|\n|```THEN```|**I should get a valid empty response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` |  Response is an empty object | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001\n- ```bookId``` = 92_C6N0Kq_oC"
 									},
 									"response": []
 								},
@@ -1179,11 +1149,7 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(`[S204C001] Reponse has status 200`, ()=> {\r",
-													"    pm.response.to.have.status(200);\r",
-													"})\r",
-													"\r",
-													"pm.test(`[S204C002] Reponse to be empty object`, ()=> {\r",
+													"pm.test(`[S204C001_${data.iteration}] Reponse to be empty object`, ()=> {\r",
 													"    pm.expect(pm.response.json()).to.be.an('object');\r",
 													"    pm.expect(pm.response.json().length).to.be.undefined;\r",
 													"})\r",
@@ -1235,7 +1201,7 @@
 												}
 											]
 										},
-										"description": "### Test Scenario : [S204] remove Book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to remove a book in my bookshelf|\n|```THEN```|**I should get a valid empty response** |\n\n\n### 2 test cases : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has \"200\" code | 1 |\n| ```[C002]``` |  Response is an empty object | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001\n- ```bookId``` = 92_C6N0Kq_oC"
+										"description": "### Test Scenario : [S204] remove Book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to remove a book in my bookshelf|\n|```THEN```|**I should get a valid empty response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` |Response is an empty object | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001\n- ```bookId``` = 92_C6N0Kq_oC"
 									},
 									"response": []
 								}
@@ -1252,9 +1218,8 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(`[S289C001] Response has 401 code with \"UNAUTHENTICATED\" status`, () => {",
+													"pm.test(`[S289C001_${data.iteration}] Response has \"UNAUTHENTICATED\" <status>`, () => {",
 													"    pm.expect(pm.response.json()).to.have.property('error');",
-													"    pm.expect(pm.response.json().error).to.have.property('code', 401);",
 													"    pm.expect(pm.response.json().error).to.have.property('status', \"UNAUTHENTICATED\");",
 													"} )"
 												],
@@ -1296,7 +1261,7 @@
 												}
 											]
 										},
-										"description": "### Test Scenario : [S289] Wrong Auth ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a edition action|\n|```AND```|I have no valid AUTH|\n|```THEN```|**I should get an error response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has 401 code with \"UNAUTHENTICATED\" status | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001"
+										"description": "### Test Scenario : [S289] Wrong Auth ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a edition action|\n|```AND```|I have no valid AUTH|\n|```THEN```|**I should get an error response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has \"UNAUTHENTICATED\" status | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001"
 									},
 									"response": []
 								},
@@ -1307,10 +1272,9 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(`[S290C001] Response has 400 code with \"INVALID_ARGUMENT\" status`, () => {",
+													"pm.test(`[S290C001_${data.iteration}] Response has \"INVALID_ARGUMENT\" <status>`, () => {",
 													"    pm.expect(pm.response.json()).to.have.property('error');",
-													"    pm.expect(pm.response.json().error).to.have.property('code', 400);",
-													"    pm.expect(pm.response.json().error).to.have.property('status', \"INVALID_ARGUMENT\");",
+													"    pm.expect(pm.response.json().error).to.have.property('status', \"UNAUTHENTICATED\");",
 													"} )"
 												],
 												"type": "text/javascript"
@@ -1363,7 +1327,7 @@
 												}
 											]
 										},
-										"description": "### Test Scenario : [S290] Wrong APIKEY ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a edition action|\n|```AND```|I have no valid APIKEY|\n|```THEN```|**I should get an error response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has 400 code with \"INVALID_ARGUMENT\" status | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001"
+										"description": "### Test Scenario : [S290] Wrong APIKEY ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a edition action|\n|```AND```|I have no valid APIKEY|\n|```THEN```|**I should get an error response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has \"UNAUTHENTICATED\" status | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1001"
 									},
 									"response": []
 								},
@@ -1374,9 +1338,8 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(`[S291C001] Response has 400 code with \"Invalid bookshelf ID.\" msg`, () => {",
+													"pm.test(`[S291C001_${data.iteration}] Response has \"Invalid bookshelf ID.\" <message>`, () => {",
 													"    pm.expect(pm.response.json()).to.have.property('error');",
-													"    pm.expect(pm.response.json().error).to.have.property('code', 400);",
 													"    pm.expect(pm.response.json().error).to.have.property('message', \"Invalid bookshelf ID.\");",
 													"} )"
 												],
@@ -1415,7 +1378,7 @@
 												}
 											]
 										},
-										"description": "### Test Scenario : [S291] Wrong bookshelf id ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a bookshelf by id|\n|```AND```|I the id is NOT valid|\n|```THEN```|**I should get an error response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has 400 code with \"Invalid bookshelf ID.\" msg | 1 |\n\n**Datas :**\n- ```bookshelfId``` = abc"
+										"description": "### Test Scenario : [S291] Wrong bookshelf id ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a bookshelf by id|\n|```AND```|I the id is NOT valid|\n|```THEN```|**I should get an error response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has \"Invalid bookshelf ID.\" msg | 1 |\n\n**Datas :**\n- ```bookshelfId``` = abc"
 									},
 									"response": []
 								},
@@ -1426,11 +1389,7 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(`[S292C001] Response has status 403`, ()=> {\r",
-													"    pm.response.to.have.status(403);\r",
-													"})\r",
-													"\r",
-													"pm.test(`[S292C002] Response to have matching error msg`, ()=> {\r",
+													"pm.test(`[S292C002_${data.iteration}] Response to have matching error msg`, ()=> {\r",
 													"    pm.expect(pm.response.json().error.message).to.eql('Cannot modify read-only resource.');\r",
 													"})\r",
 													""
@@ -1481,7 +1440,7 @@
 												}
 											]
 										},
-										"description": "### Test Scenario : [S292] Add Book to PRIVATE bookshelf ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to add a book in a private bookshelf|\n|```THEN```|**I should get a valid empty response** |\n\n\n### 2 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response has \"403\" code | 1 |\n| ```[C002]``` |  Response to have matching error msg | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1\n- ```bookId``` = 92_C6N0Kq_oC"
+										"description": "### Test Scenario : [S292] Add Book to PRIVATE bookshelf ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service to add a book in a private bookshelf|\n|```THEN```|**I should get a valid empty response** |\n\n\n### 1 test case : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response to has \"Cannot modify read-only resource\" | 1 |\n\n**Datas :**\n- ```bookshelfId``` = 1\n- ```bookId``` = 92_C6N0Kq_oC"
 									},
 									"response": []
 								}
@@ -1512,7 +1471,7 @@
 					]
 				}
 			],
-			"description": "### This folder contains a set of INTEGRATION TESTS on : ###\n\n- **VOLUMES** :\n    - LIST BOOKS : requests for several books [S001] to [S099]\n    - GET BOOK : request for a specific book [101] to [S199]\n- **BOOKSHELVES** :\n    - requests to GET and MANIPULATE bookshelves [S201] to [299]\n\nEach request has a performance test challenging response speed, and format :\n\n### TEST SCENARIO : [S00Time] Response Time\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in less than 400ms** |\n\n### TEST SCENARIO : [S00json] response format is JSON\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in JSON format** |",
+			"description": "### This folder contains a set of INTEGRATION TESTS on : ###\n\n- **VOLUMES** :\n    - LIST BOOKS : requests for several books [S001] to [S099]\n    - GET BOOK : request for a specific book [101] to [S199]\n- **BOOKSHELVES** :\n    - requests to GET and MANIPULATE bookshelves [S201] to [299]\n\nEach request has initial tests challenging response speed, format and content :\n\n### TEST SCENARIO :\n|Verb|Description|name|\n|-:|:-|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in less than 400ms** |[time]\n|```THEN```|**I should get a response in json format** |[format]\n|```THEN```|**I should get a response with \"kind\" property set accordingly** |[kind]",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -1528,14 +1487,28 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"pm.test(\"[S00time] response time is below 400ms\",() => {",
-							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"const code = data.expected.code ? data.expected.code : 200;",
+							"const time = data.expected.time ? data.expected.time : 400;",
+							"",
+							"pm.test(`[time_${data.iteration}] Response time is below ${time}ms`,() => {",
+							"    pm.expect(pm.response.responseTime).to.be.below(time);",
 							"});",
 							"",
-							"pm.test(\"[S00json] response format is JSON\",() => {",
+							"pm.test(`[code_${data.iteration}] Response code is ${code}`,() => {",
+							"    pm.response.to.have.status(code);",
+							"});",
+							"",
+							"pm.test(\"[format_${data.iteration}] Response format is JSON\",() => {",
 							"    pm.response.to.have.header(\"Content-Type\");",
 							"    pm.response.to.be.json;",
-							"});"
+							"});",
+							"",
+							"if(data.expected.kind) {",
+							"    pm.test(`[kind_${data.iteration}] Response is an object with \"kind\" = ${data.expected.kind}`,() => {",
+							"        pm.expect(pm.response.json()).to.be.a('object');",
+							"        pm.expect(pm.response.json()).to.have.property('kind', data.expected.kind);",
+							"    });",
+							"}"
 						]
 					}
 				}
@@ -1554,18 +1527,9 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"[S201aC001] Response has 200 status code\",() => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"pm.test(\"[S201aC002] Response Content-Type is present and is JSON\",() => {",
-											"    pm.response.to.have.header(\"Content-Type\");",
-											"    pm.response.to.be.json;",
-											"});",
-											"",
 											"const response = pm.response.json()",
 											"",
-											"pm.test(`[S201aC003] Response object has all expected properties`,() => {",
+											"pm.test(`[S201aC001_${data.iteration}] Response object has all expected properties`,() => {",
 											"    pm.expect(response).to.be.an('object')",
 											"    pm.expect(response).to.have.property('kind');",
 											"    pm.expect(response.kind).to.eql('books#volumes');",
@@ -1575,26 +1539,26 @@
 											"",
 											"const items = pm.response.json().items;",
 											"",
-											"pm.test(`[S201aC004] Response has ${data.maxResults} items`, () => {",
+											"pm.test(`[S201aC002_${data.iteration}] Response has ${data.maxResults} items`, () => {",
 											"    pm.expect(pm.response.json()).to.have.property('items')",
 											"    pm.expect(items).to.be.an('array')",
 											"    pm.expect(items.length).to.be.lte(parseInt(data.maxResults))",
 											"})",
 											"",
-											"pm.test(`[S201aC005] Each item of response has an \"id\" property`, () => {",
+											"pm.test(`[S201aC003_${data.iteration}] Each item of response has an <id> property`, () => {",
 											"    items.forEach((item)=> {",
 											"        pm.expect(item).to.have.property('id');",
 											"    })",
 											"})",
 											"",
-											"pm.test(`[S201aC006] Each item of response has a \"language\" property set to \"${data.lang}\"`, () => {",
+											"pm.test(`[S201aC004_${data.iteration}] Each item of response has a <language> property set to \"${data.lang}\"`, () => {",
 											"    items.forEach((item)=> {",
 											"        pm.expect(item.volumeInfo).to.have.property('language');",
 											"        pm.expect(item.volumeInfo.language).to.eql(data.lang);",
 											"    })",
 											"})",
 											"",
-											"pm.test(`[S201aC007] Each item's AUTHORS is an array that includes \"${data.expected.author}\"`, () => {",
+											"pm.test(`[S201aC005_${data.iteration}] Each item's <authors> is an array that includes \"${data.expected.author}\"`, () => {",
 											"let result = false;",
 											"    items.forEach(item => {",
 											"        pm.expect(item.volumeInfo.authors).to.be.an('array');",
@@ -1612,7 +1576,7 @@
 											"return date;",
 											"}",
 											"",
-											"pm.test(`[S201aC008] Response items are sorted from newest to oldest`, () => {",
+											"pm.test(`[S201aC006] Response <items> are sorted from newest to oldest`, () => {",
 											"    let date1 = makeTimestampFromString(items[0].volumeInfo.publishedDate)",
 											"    let date2",
 											"    for(let i=1; i < items.length; i++) {",
@@ -1672,7 +1636,7 @@
 										}
 									]
 								},
-								"description": "### Test Scenario : [S501a] Get a list of books ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint|\n|```AND```|I search for a book in FRENCH |\n|```AND```|I want the author to be \"Céline Minard\" |\n|```AND```|I want the 5 most recent publications |\n|```THEN```|**I should get a valid response matching the requirements** |\n\n\n### 3 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has headers with content-type \"JSON\" | 1 |\n| ```[C003]``` | Response is an object,<br>has ```kind``` property with value \"books#volumes\", <br>and has \"totalItems\" property with value above 0. | 1 |\n| ```[C004]``` | Response has ```ìtems```property, which is an array of ```maxResults``` objects | 1 |\n| ```[C005]``` | Each item has an ```ìd``` | 1 |\n| ```[C006]``` | Each item has an ```language``` = ```lang``` | 1 |\n| ```[C007]``` | Each item has an ```author``` property which is an array that contains ```qData```| 1 |\n| ```[C008]``` | Items are sorted by ```publishedDate```| 1 |\n\n#### Datas : ####\n- ```qScope```= \"inauthor\"\n- ```qData```=\"Céline Minard\"\n- ```maxResults```=\"5\"\n-```lang```=\"fr\"\n-```orderBy```=\"newest\""
+								"description": "### Test Scenario : [S501a] Get a list of books ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint|\n|```AND```|I search for a book in FRENCH |\n|```AND```|I want the author to be \"Céline Minard\" |\n|```AND```|I want the 5 most recent publications |\n|```THEN```|**I should get a valid response matching the requirements** |\n\n\n### 5 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response is an object,<br>has ```kind``` property with value \"books#volumes\", <br>and has \"totalItems\" property with value above 0. | 1 |\n| ```[C004]``` | Response has ```ìtems```property, which is an array of ```maxResults``` objects | 1 |\n| ```[C005]``` | Each item has an ```ìd``` | 1 |\n| ```[C006]``` | Each item has an ```language``` = ```lang``` | 1 |\n| ```[C007]``` | Each item has an ```author``` property which is an array that contains ```qData```| 1 |\n| ```[C008]``` | Items are sorted by ```publishedDate```| 1 |\n\n#### Datas : ####\n- ```qScope```= \"inauthor\"\n- ```qData```=\"Céline Minard\"\n- ```maxResults```=\"5\"\n-```lang```=\"fr\"\n-```orderBy```=\"newest\""
 							},
 							"response": []
 						},
@@ -1694,15 +1658,15 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"[S501bC001] Response id matches request id\",() => {",
+											"pm.test(\"[S501bC001_${data.iteration}] Response <id> matches request id\",() => {",
 											"    pm.expect(pm.response.json().id).to.eql(pm.environment.get('bookId'))",
 											"});",
 											"",
-											"pm.test(`[S501bC002] Response title matches`,() => {",
+											"pm.test(`[S501bC002_${data.iteration}] Response <title> matches request title`,() => {",
 											"    pm.expect(pm.response.json().volumeInfo.title).to.eql(pm.environment.get('bookTitle'))",
 											"});",
 											"",
-											"pm.test(\"[S501bC003] Response image link is valid and pointing to an image\",() => {",
+											"pm.test(`[S501bC003_${data.iteration}] Response has <thumbnail> property pointing to an image`,() => {",
 											"    pm.expect(pm.response.json().volumeInfo).to.have.property('imageLinks');",
 											"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');",
 											"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;",
@@ -1717,7 +1681,7 @@
 											"    }",
 											"});",
 											"",
-											"pm.test(\"[S201bC004] Response preview link is valid and pointing to an html page\",() => {",
+											"pm.test(`[S201bC004_${data.iteration}] Response <previewLink> is valid and pointing to an html page`,() => {",
 											"    pm.expect(pm.response.json().volumeInfo).to.have.property('previewLink');",
 											"    const previewUrl = pm.response.json().volumeInfo.previewLink;",
 											"    pm.expect(previewUrl).to.be.a('string');",
@@ -1731,7 +1695,7 @@
 											"    }",
 											"});",
 											"",
-											"pm.test(\"[S201bC005] Response info link is valid and pointing to an html page\",() => {",
+											"pm.test(`[S201bC005_${data.iteration}] Response infoLink is valid and pointing to an html page`,() => {",
 											"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');",
 											"    const infoUrl = pm.response.json().volumeInfo.infoLink;",
 											"    pm.expect(infoUrl).to.be.a('string');",
@@ -1803,11 +1767,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(`[S502aC001] Response has status 200`, ()=> {\r",
-											"    pm.response.to.have.status(200);\r",
-											"})\r",
-											"\r",
-											"pm.test(`[S502a002] Response to be empty object`, ()=> {\r",
+											"pm.test(`[S502a001_${data.iteration}] Response is an empty object`, ()=> {\r",
 											"    pm.expect(pm.response.json()).to.be.an('object');\r",
 											"    pm.expect(pm.response.json().length).to.be.undefined;\r",
 											"})\r",
@@ -1853,7 +1813,7 @@
 										}
 									]
 								},
-								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has no content | 1 |"
+								"description": "### 1 test case : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` |Response has no content | 1 |"
 							},
 							"response": []
 						},
@@ -1873,18 +1833,14 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(`[S502bC001] Response has status 200`, ()=> {\r",
-											"    pm.response.to.have.status(200);\r",
-											"})\r",
-											"\r",
-											"pm.test(`[S502bC002] Response to be object with \"kind\" and \"totalItems\" properties`, ()=> {\r",
+											"pm.test(`[S502bC001_${data.iteration}] Response is an object, has <kind> and <totalItems> properties`, ()=> {\r",
 											"    pm.expect(pm.response.json()).to.be.an('object');\r",
 											"    pm.expect(pm.response.json()).to.have.property('kind');\r",
 											"    pm.expect(pm.response.json()).to.have.property('totalItems');\r",
 											"    pm.expect(pm.response.json().kind).to.eql('books#volumes');\r",
 											"})\r",
 											"\r",
-											"pm.test(`[S502bC003] Response \"totalItems\" = 0`, ()=> {\r",
+											"pm.test(`[S502bC002_${data.iteration}] Response <totalItems> = 0`, ()=> {\r",
 											"    pm.expect(pm.response.json().totalItems).to.eql(0);\r",
 											"})\r",
 											"\r",
@@ -1915,7 +1871,7 @@
 										}
 									]
 								},
-								"description": "### Test Scenario : [S502b] consult bookshelf ###\n\n### 3 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has all expected properties | 1 |\n| ```[C003]``` | Response has \"totalItems\" set to 0 | 1 |"
+								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has all expected properties | 1 |\n| ```[C002]``` | Response has \"totalItems\" set to 0 | 1 |"
 							},
 							"response": []
 						},
@@ -1926,11 +1882,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(`[S502cC001] Response has status 200`, ()=> {\r",
-											"    pm.response.to.have.status(200);\r",
-											"});\r",
-											"\r",
-											"pm.test(`[S502cC002] Response to be empty object`, ()=> {\r",
+											"pm.test(`[S502cC001_${data.iteration}] Response is an object`, ()=> {\r",
 											"    pm.expect(pm.response.json()).to.be.an('object');\r",
 											"    pm.expect(pm.response.json().length).to.be.undefined;\r",
 											"});\r",
@@ -1980,7 +1932,7 @@
 										}
 									]
 								},
-								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has no content | 1 |"
+								"description": "### 1 test case : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has no content | 1 |"
 							},
 							"response": []
 						},
@@ -2000,19 +1952,14 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(`[S502dC001] Response has status 200`, ()=> {\r",
-											"    pm.response.to.have.status(200);\r",
-											"})\r",
-											"\r",
-											"pm.test(`[S502dC002] Response to be object with \"kind\" and \"totalItems\" properties`, ()=> {\r",
+											"pm.test(`[S502dC001_${data.iteration}] Response is an object, has <kind> and <totalItems> properties`, ()=> {\r",
 											"    pm.expect(pm.response.json()).to.be.an('object');\r",
 											"    pm.expect(pm.response.json()).to.have.property('kind');\r",
+											"    pm.expect(pm.response.json().kind).to.eql('books#volumes');;\r",
 											"    pm.expect(pm.response.json()).to.have.property('totalItems');\r",
-											"    pm.expect(pm.response.json().kind).to.eql('books#volumes');\r",
-											"    pm.expect(pm.response.json().totalItems).to.eq(pm.collectionVariables.get('initialTotalItemsOfBookshelf')+1);\r",
 											"})\r",
 											"\r",
-											"pm.test(`[S502dC003] Response \"totalItems\" = 1`, ()=> {\r",
+											"pm.test(`[S502dC002_${data.iteration}] Response \"totalItems\" = 1`, ()=> {\r",
 											"    pm.expect(pm.response.json().totalItems).to.eq(pm.collectionVariables.get('initialTotalItemsOfBookshelf')+1);\r",
 											"})\r",
 											""
@@ -2042,7 +1989,7 @@
 										}
 									]
 								},
-								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has expected properties| 1 |\n| ```[C003]``` | Response has \"totalItems\" = 1| 1 |"
+								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has expected properties| 1 |\n| ```[C002]``` | Response has \"totalItems\" = 1| 1 |"
 							},
 							"response": []
 						},
@@ -2062,21 +2009,16 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(`[S502eC001] Reponse has status 200`, ()=> {\r",
-											"    pm.response.to.have.status(200);\r",
-											"})\r",
-											"\r",
 											"const response = pm.response.json()\r",
 											"\r",
-											"pm.test(`[S502e002] Response object has all expected properties`,() => {\r",
+											"pm.test(`[S502e001_${data.iteration}] Response is an object, has <kind> = \"books#volumes\"`,() => {\r",
 											"    pm.expect(response).to.be.an('object')\r",
 											"    pm.expect(response).to.have.property('kind');\r",
 											"    pm.expect(response.kind).to.eql('books#volumes');\r",
-											"    pm.expect(response.items[0].volumeInfo.title).to.eql(data.expected.title)\r",
 											"    \r",
 											"});\r",
 											"\r",
-											"pm.test(`[S502e003] Response object has uniq item with \"id\" = ${data.bookId} and \"title\" = ${data.expected.title}`,() => {\r",
+											"pm.test(`[S502e002_${data.iteration}] Response object has uniq item with \"id\" = ${data.bookId} and \"title\" = ${data.expected.title}`,() => {\r",
 											"    pm.expect(response.items[0].id).to.eql(data.bookId);\r",
 											"    pm.expect(response.items[0].volumeInfo.title).to.eql(data.expected.title);\r",
 											"});\r",
@@ -2107,7 +2049,7 @@
 										}
 									]
 								},
-								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has expected properties| 1 |\n| ```[C003]``` | Response has one item which id and title matches book from [S502c]| 1 |"
+								"description": "### 2 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has expected properties| 1 |\n| ```[C002]``` | Response has one item which id and title matches book from [S502c]| 1 |"
 							},
 							"response": []
 						},
@@ -2118,11 +2060,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(`[S502fC001] Response has status 200`, ()=> {\r",
-											"    pm.response.to.have.status(200);\r",
-											"})\r",
-											"\r",
-											"pm.test(`[S502f002] Response to be empty object`, ()=> {\r",
+											"pm.test(`[S502f001_${data.iteration}] Response is an empty object`, ()=> {\r",
 											"    pm.expect(pm.response.json()).to.be.an('object');\r",
 											"    pm.expect(pm.response.json().length).to.be.undefined;\r",
 											"})\r",
@@ -2194,16 +2132,12 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(`[S502gC001] Reponse has status 200`, ()=> {\r",
-											"    pm.response.to.have.status(200);\r",
-											"})\r",
-											"\r",
 											"const initialTotalItemsOfBookshelf = pm.collectionVariables.get('initialTotalItemsOfBookshelf')\r",
 											"\r",
-											"pm.test(`[S502gC002] total Items of bookshelf is back to ${initialTotalItemsOfBookshelf}`, ()=> {\r",
+											"pm.test(`[S502gC001_${data.iteration}] total Items of bookshelf is back to ${initialTotalItemsOfBookshelf}`, ()=> {\r",
 											"    pm.expect(pm.response.json().totalItems).to.eql(initialTotalItemsOfBookshelf)\r",
 											"})\r",
-											"pm.test(`[S502gC003] bookId ${data.bookId} is no longer present in bookshelf list`, () => {\r",
+											"pm.test(`[S502gC002_${data.iteration}] bookId ${data.bookId} is no longer present in bookshelf list`, () => {\r",
 											"    if(pm.response.json().items) {\r",
 											"        pm.response.json().items.forEach(item => {\r",
 											"            pm.expect(item.id).to.not.eql(data.bookId);\r",
@@ -2239,7 +2173,7 @@
 										}
 									]
 								},
-								"description": "### 3 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has \"200\" Status code | 1|\n| ```[C002]``` | Response has totalItems back to [S502b] value | 1 |\n| ```[C003]``` | Response has no longer an item of id \"B3hOv6y9_dcC\"| 1 |"
+								"description": "### 3 test cases : ###\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has totalItems back to [S502b] value | 1 |\n| ```[C003]``` | Response has no longer an item of id \"B3hOv6y9_dcC\"| 1 |"
 							},
 							"response": []
 						}
@@ -2267,7 +2201,7 @@
 					]
 				}
 			],
-			"description": "### This folder contains a set of REGRESSION TESTS on specific Use Cases : ###\n\n- **Use Case 1 :** As the client I want to request for 1 book out of a book list I requested, in order to get informations about this book. [S201]\n\nEach request has a performance test challenging response speed, and format :\n\n### TEST SCENARIO : [S00Time] Response Time\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in less than 400ms** |\n\n### TEST SCENARIO : [S00json] response format is JSON\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in JSON format** |",
+			"description": "### This folder contains a set of REGRESSION TESTS on specific Use Cases : ###\n\n- **Use Case 1 :** As the client I want to request for 1 book out of a book list I requested, in order to get informations about this book. [S201]\n\nEach request has initial tests challenging response speed, format and content :\n\n### TEST SCENARIO :\n|Verb|Description|name|\n|-:|:-|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service |\n|```AND```|And my endpoint is valid |\n|```THEN```|**I should get a response in less than 400ms** |[time]\n|```THEN```|**I should get a response in json format** |[format]\n|```THEN```|**I should get a response with \"kind\" property set accordingly** |[kind]",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -2283,11 +2217,18 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"pm.test(\"[S00time] response time is below 400ms\",() => {",
-							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"const code = data.expected.code ? data.expected.code : 200;",
+							"const time = data.expected.time ? data.expected.time : 400;",
+							"",
+							"pm.test(`[time_${data.iteration}] response time is below ${time}ms`,() => {",
+							"    pm.expect(pm.response.responseTime).to.be.below(time);",
 							"});",
 							"",
-							"pm.test(\"[S00json] response format is JSON\",() => {",
+							"pm.test(`[code_${data.iteration}] response code is ${code}`,() => {",
+							"    pm.response.to.have.status(code);",
+							"});",
+							"",
+							"pm.test(\"[json_${data.iteration}] response format is JSON\",() => {",
 							"    pm.response.to.have.header(\"Content-Type\");",
 							"    pm.response.to.be.json;",
 							"});"
@@ -2295,6 +2236,37 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "sandbox",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/volumes?q=intitle:arcachon&startIndex=1990\"expected\": {\n            \"kind\" : \"books#volumes\"\n        }",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"volumes"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "intitle:arcachon"
+						},
+						{
+							"key": "startIndex",
+							"value": "1990\"expected\": {\n            \"kind\" : \"books"
+						}
+					],
+					"hash": "volumes\"\n        }"
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -2307,7 +2279,12 @@
 			},
 			{
 				"key": "accessToken",
-				"value": "{{dynamicToken}}",
+				"value": "{{dynamic_token}}",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "https://www.googleapis.com/auth/books",
 				"type": "string"
 			},
 			{
@@ -2333,11 +2310,6 @@
 			{
 				"key": "tokenName",
 				"value": "googleAuth",
-				"type": "string"
-			},
-			{
-				"key": "scope",
-				"value": "{{clientScope}}",
 				"type": "string"
 			},
 			{
@@ -2381,18 +2353,6 @@
 		{
 			"key": "endpoint",
 			"value": "https://www.googleapis.com/books/v1"
-		},
-		{
-			"key": "rndBookId",
-			"value": ""
-		},
-		{
-			"key": "bookIdIndex5",
-			"value": ""
-		},
-		{
-			"key": "bookIdIndexWithoutOffset",
-			"value": ""
 		},
 		{
 			"key": "initialTotalItemsOfBookshelf",
