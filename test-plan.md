@@ -40,7 +40,9 @@ The product being tested is the GOOGLE BOOKS API in order to ensure integration/
 
 **Reporting** : HTML report will be created for each execution of the test suite. Report will be saved locally on the machine that executed the scripts, and may be pushed on a GH repo with ```launchTest.sh```.
 
-**Risks** : Considering the fact that we are testing an external API, changes or discontinuation of service may cause large production delays.
+**Risks** : 
+- Google books API sets a quota of daily requests to 1000
+- Considering the fact that we are testing an external API, changes or discontinuation of service may cause large production delays.
 ***
 
 ## Further Documentation :

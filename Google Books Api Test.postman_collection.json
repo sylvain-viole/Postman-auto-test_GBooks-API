@@ -16,10 +16,6 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"let token = pm.environment.get('dynamicToken');\r",
-									"token = 'ya29.a0AfH6SMCdlOJvmPASXsO1i43sNvHF1Pqoc754gvevwOEH-xrnNri-HjcVC1HiRSE96GCZzriv0_m23wCAjAzDVrb2eV6epsb7mM22m_pg7YG8-C68A6BiosEnUOqQi9Rud-a_BpRpDnGhHMlPRV8og6K_GulIaw'; // Perform some operations here.. \r",
-									"pm.environment.set('dynamicToken', token);\r",
-									"\r",
 									"switch (data.scenario) {\r",
 									"    case \"S001\":\r",
 									"        postman.setNextRequest('[S001] Critical Tests');\r",
@@ -78,9 +74,9 @@
 									"    case \"S501a\":\r",
 									"        postman.setNextRequest('[S501a] Get a list of books');\r",
 									"        break;\r",
-									"    case \"S501b\":\r",
-									"        postman.setNextRequest('[S501b] Pick one book');\r",
-									"        break;\r",
+									"//    case \"S501b\":\r",
+									"//        postman.setNextRequest('[S501b] Pick one book');\r",
+									"//        break;\r",
 									"    case \"S502\":\r",
 									"        postman.setNextRequest('[S502a] Empty test bookshelf');\r",
 									"        break;\r",
@@ -801,7 +797,7 @@
 															"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');\r",
 															"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;\r",
 															"    pm.expect(imageUrl).to.be.a('string');\r",
-															"    pm.expect(imageUrl).includes('http');\r",
+															"    pm.expect(imageUrl).to.satisfy(url => {return url.startswith('https')});\r",
 															"    if(imageUrl) {\r",
 															"        pm.sendRequest(imageUrl, (error, response) => {\r",
 															"            console.log(error ? error : \"image request ok\")\r",
@@ -815,7 +811,7 @@
 															"    pm.expect(pm.response.json().volumeInfo).to.have.property('previewLink');\r",
 															"    const previewUrl = pm.response.json().volumeInfo.previewLink;\r",
 															"    pm.expect(previewUrl).to.be.a('string');\r",
-															"    pm.expect(previewUrl).includes('http');\r",
+															"    pm.expect(previewUrl).to.satisfy(url => {return url.startswith('https')});\r",
 															"    if(previewUrl) {\r",
 															"        pm.sendRequest(previewUrl, (error, response) => {\r",
 															"            console.log(error ? error : \"link request ok\")\r",
@@ -829,7 +825,7 @@
 															"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');\r",
 															"    const infoUrl = pm.response.json().volumeInfo.infoLink;\r",
 															"    pm.expect(infoUrl).to.be.a('string');\r",
-															"    pm.expect(infoUrl).includes('http');\r",
+															"    pm.expect(infoUrl).to.satisfy(url => {return url.startswith('https')});\r",
 															"    if(infoUrl) {\r",
 															"        pm.sendRequest(infoUrl, (error, response) => {\r",
 															"            console.log(error ? error : \"link request ok\")\r",
@@ -1488,23 +1484,25 @@
 						"type": "text/javascript",
 						"exec": [
 							"const code = data.expected.code ? data.expected.code : 200;",
-							"const time = data.expected.time ? data.expected.time : 400;",
+							"const time = data.expected.time ? data.expected.time : 500;",
 							"",
-							"pm.test(`[time_${data.iteration}] Response time is below ${time}ms`,() => {",
-							"    pm.expect(pm.response.responseTime).to.be.below(time);",
+							"const iteration = pm.collectionVariables.get('iteration') ? pm.collectionVariables.get('iteration') : data.iteration",
+							"",
+							"pm.test(`[time_${iteration}] Response time is below ${time}ms`,() => {",
+							"    pm.expect(pm.response.responseTime, 'time error').to.be.below(time);",
 							"});",
 							"",
-							"pm.test(`[code_${data.iteration}] Response code is ${code}`,() => {",
+							"pm.test(`[code_${iteration}] Response code is ${code}`,() => {",
 							"    pm.response.to.have.status(code);",
 							"});",
 							"",
-							"pm.test(\"[format_${data.iteration}] Response format is JSON\",() => {",
+							"pm.test(`[format_${iteration}] Response format is JSON`,() => {",
 							"    pm.response.to.have.header(\"Content-Type\");",
 							"    pm.response.to.be.json;",
 							"});",
 							"",
 							"if(data.expected.kind) {",
-							"    pm.test(`[kind_${data.iteration}] Response is an object with \"kind\" = ${data.expected.kind}`,() => {",
+							"    pm.test(`[kind_${iteration}] Response is an object with \"kind\" = ${data.expected.kind}`,() => {",
 							"        pm.expect(pm.response.json()).to.be.a('object');",
 							"        pm.expect(pm.response.json()).to.have.property('kind', data.expected.kind);",
 							"    });",
@@ -1529,7 +1527,7 @@
 										"exec": [
 											"const response = pm.response.json()",
 											"",
-											"pm.test(`[S201aC001_${data.iteration}] Response object has all expected properties`,() => {",
+											"pm.test(`[S501aC001_${data.iteration}] Response object has all expected properties`,() => {",
 											"    pm.expect(response).to.be.an('object')",
 											"    pm.expect(response).to.have.property('kind');",
 											"    pm.expect(response.kind).to.eql('books#volumes');",
@@ -1539,26 +1537,26 @@
 											"",
 											"const items = pm.response.json().items;",
 											"",
-											"pm.test(`[S201aC002_${data.iteration}] Response has ${data.maxResults} items`, () => {",
+											"pm.test(`[S501aC002_${data.iteration}] Response has ${data.maxResults} items`, () => {",
 											"    pm.expect(pm.response.json()).to.have.property('items')",
 											"    pm.expect(items).to.be.an('array')",
 											"    pm.expect(items.length).to.be.lte(parseInt(data.maxResults))",
 											"})",
 											"",
-											"pm.test(`[S201aC003_${data.iteration}] Each item of response has an <id> property`, () => {",
+											"pm.test(`[S501aC003_${data.iteration}] Each item of response has an <id> property`, () => {",
 											"    items.forEach((item)=> {",
 											"        pm.expect(item).to.have.property('id');",
 											"    })",
 											"})",
 											"",
-											"pm.test(`[S201aC004_${data.iteration}] Each item of response has a <language> property set to \"${data.lang}\"`, () => {",
+											"pm.test(`[S501aC004_${data.iteration}] Each item of response has a <language> property set to \"${data.lang}\"`, () => {",
 											"    items.forEach((item)=> {",
 											"        pm.expect(item.volumeInfo).to.have.property('language');",
 											"        pm.expect(item.volumeInfo.language).to.eql(data.lang);",
 											"    })",
 											"})",
 											"",
-											"pm.test(`[S201aC005_${data.iteration}] Each item's <authors> is an array that includes \"${data.expected.author}\"`, () => {",
+											"pm.test(`[S501aC005_${data.iteration}] Each item's <authors> is an array that includes \"${data.expected.author}\"`, () => {",
 											"let result = false;",
 											"    items.forEach(item => {",
 											"        pm.expect(item.volumeInfo.authors).to.be.an('array');",
@@ -1576,7 +1574,7 @@
 											"return date;",
 											"}",
 											"",
-											"pm.test(`[S201aC006] Response <items> are sorted from newest to oldest`, () => {",
+											"pm.test(`[S501aC006] Response <items> are sorted from newest to oldest`, () => {",
 											"    let date1 = makeTimestampFromString(items[0].volumeInfo.publishedDate)",
 											"    let date2",
 											"    for(let i=1; i < items.length; i++) {",
@@ -1586,8 +1584,19 @@
 											"    }",
 											"})",
 											"",
-											"pm.environment.set('bookId',items[0].id)",
-											"pm.environment.set('bookTitle',items[0].volumeInfo.title)",
+											"let ids = [];",
+											"let titles = [];",
+											"",
+											"items.forEach(item => {",
+											" ids.push(item.id)",
+											" titles.push(item.volumeInfo.title)",
+											"});",
+											"",
+											"pm.collectionVariables.set('iteration', 1);",
+											"pm.collectionVariables.set('ids', ids);",
+											"pm.collectionVariables.set('titles', titles);",
+											"",
+											"",
 											"",
 											""
 										],
@@ -1598,9 +1607,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"if(data.scenario === \"S501a\") {",
-											"    postman.setNextRequest(null)",
-											"}"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -1647,8 +1654,18 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"if(data.scenario === \"S501b\") {",
+											"if(pm.collectionVariables.get('ids').length === 1) {",
 											"    postman.setNextRequest(null)",
+											"} else {",
+											"    const ids = pm.collectionVariables.get('ids');",
+											"    pm.collectionVariables.set('bookId', ids[0] );",
+											"    ids.shift();",
+											"    pm.collectionVariables.set('ids', ids);",
+											"    const titles = pm.collectionVariables.get('titles');",
+											"    pm.collectionVariables.set('bookTitle', titles[0] );",
+											"    titles.shift();",
+											"    pm.collectionVariables.set('titles', titles);",
+											"    postman.setNextRequest('[S501b] Pick one book');",
 											"}"
 										],
 										"type": "text/javascript"
@@ -1658,20 +1675,22 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"[S501bC001_${data.iteration}] Response <id> matches request id\",() => {",
-											"    pm.expect(pm.response.json().id).to.eql(pm.environment.get('bookId'))",
+											"let i = pm.collectionVariables.get('iteration');",
+											"",
+											"pm.test(`[S501bC001_${i}] Response <id> matches request id`,() => {",
+											"    pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get('bookId'))",
 											"});",
 											"",
-											"pm.test(`[S501bC002_${data.iteration}] Response <title> matches request title`,() => {",
-											"    pm.expect(pm.response.json().volumeInfo.title).to.eql(pm.environment.get('bookTitle'))",
+											"pm.test(`[S501bC002_${i}] Response <title> matches request title`,() => {",
+											"    pm.expect(pm.response.json().volumeInfo.title).to.eql(pm.collectionVariables.get('bookTitle'))",
 											"});",
 											"",
-											"pm.test(`[S501bC003_${data.iteration}] Response has <thumbnail> property pointing to an image`,() => {",
+											"pm.test(`[S501bC003_${i}] Response has <thumbnail> property pointing to an image`,() => {",
 											"    pm.expect(pm.response.json().volumeInfo).to.have.property('imageLinks');",
 											"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');",
 											"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;",
 											"    pm.expect(imageUrl).to.be.a('string');",
-											"    pm.expect(imageUrl).includes('http');",
+											"    pm.expect(imageUrl).to.satisfy(url => {return url.startsWith('http')});",
 											"    if(imageUrl) {",
 											"        pm.sendRequest(imageUrl, (error, response) => {",
 											"            console.log(error ? error : \"image request ok\")",
@@ -1681,11 +1700,11 @@
 											"    }",
 											"});",
 											"",
-											"pm.test(`[S201bC004_${data.iteration}] Response <previewLink> is valid and pointing to an html page`,() => {",
+											"pm.test(`[S201bC004_${i}] Response <previewLink> is valid and pointing to an html page`,() => {",
 											"    pm.expect(pm.response.json().volumeInfo).to.have.property('previewLink');",
 											"    const previewUrl = pm.response.json().volumeInfo.previewLink;",
 											"    pm.expect(previewUrl).to.be.a('string');",
-											"    pm.expect(previewUrl).includes('http');",
+											"    pm.expect(previewUrl).to.satisfy(url => {return url.startsWith('http')});",
 											"    if(previewUrl) {",
 											"        pm.sendRequest(previewUrl, (error, response) => {",
 											"            console.log(error ? error : \"link request ok\")",
@@ -1695,11 +1714,11 @@
 											"    }",
 											"});",
 											"",
-											"pm.test(`[S201bC005_${data.iteration}] Response infoLink is valid and pointing to an html page`,() => {",
+											"pm.test(`[S201bC005_${i}] Response infoLink is valid and pointing to an html page`,() => {",
 											"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');",
 											"    const infoUrl = pm.response.json().volumeInfo.infoLink;",
 											"    pm.expect(infoUrl).to.be.a('string');",
-											"    pm.expect(infoUrl).includes('http');",
+											"    pm.expect(infoUrl).to.satisfy(url => {return url.startsWith('http')});",
 											"    if(infoUrl) {",
 											"        pm.sendRequest(infoUrl, (error, response) => {",
 											"            console.log(error ? error : \"link request ok\")",
@@ -1708,6 +1727,8 @@
 											"        })",
 											"    }",
 											"});",
+											"",
+											"pm.collectionVariables.set('iteration', i + 1)",
 											""
 										],
 										"type": "text/javascript"
@@ -1727,12 +1748,12 @@
 										"{{bookId}}"
 									]
 								},
-								"description": "### Test Scenario : [S502b] Pick one book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a book|\n|```AND```|The book is in a previous requested book list |\n|```THEN```|**I should get a valid response with a book and its informations** |\n\n\n### 3 test cases : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response ```ìd```matches the request | 1 |\n| ```[C002]``` | Response ```title```is as expected | 1|\n| ```[C003]``` | Response has ```thumbnail```parameter that contains an url string,<br>request to this url returns a 200 code with \"image\" as content-type | 1 |\n| ```[C004]``` | Response has ```previewLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | 1|\n| ```[C005]``` | Response has ```infoLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | 1 |\n\n**Datas :**\n- ```bookId```= \"B3hOv6y9_dcC\"\n- ```bookshelfId```= 1001"
+								"description": "### Test Scenario : [S502b] Pick one book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a book|\n|```AND```|The book is in a previous requested book list |\n|```THEN```|**I should get a valid response with a book and its informations** |\n\n\n### 3 test cases : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response ```ìd```matches the request | depends on [S501a] result count |\n| ```[C002]``` | Response ```title```is as expected | depends on [S501a] result count|\n| ```[C003]``` | Response has ```thumbnail```parameter that contains an url string,<br>request to this url returns a 200 code with \"image\" as content-type | depends on [S501a] result count |\n| ```[C004]``` | Response has ```previewLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | depends on [S501a] result count|\n| ```[C005]``` | Response has ```infoLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | depends on [S501a] result count |\n\n**Datas :**\n- ```bookId```= depends on [S501a] result id\n- ```bookTitle```= depends on [S501a] result title\n- ```bookshelfId```= 1001"
 							},
 							"response": []
 						}
 					],
-					"description": "#### [S501] : As the client I want to list books, then pick one in order to retrieve informations aubout it. ####\n\nIt is made of 2 sub scenarios :\n- [S501a]\n- [S502b]",
+					"description": "#### [S501] : As the client I want to list books, then pick each book in order to retrieve informations aubout it. ####\n\nIt is made of 2 sub scenarios :\n- [S501a]\n- [S502b] called as many times as [S501a] result count",
 					"auth": {
 						"type": "noauth"
 					},
@@ -2218,55 +2239,33 @@
 						"type": "text/javascript",
 						"exec": [
 							"const code = data.expected.code ? data.expected.code : 200;",
-							"const time = data.expected.time ? data.expected.time : 400;",
+							"const time = data.expected.time ? data.expected.time : 500;",
 							"",
-							"pm.test(`[time_${data.iteration}] response time is below ${time}ms`,() => {",
-							"    pm.expect(pm.response.responseTime).to.be.below(time);",
+							"const i = pm.collectionVariables.get('iteration') ? pm.collectionVariables.get('iteration') : data.iteration",
+							"",
+							"pm.test(`[time_${i}] Response time is below ${time}ms`,() => {",
+							"    pm.expect(pm.response.responseTime, 'time error').to.be.below(time);",
 							"});",
 							"",
-							"pm.test(`[code_${data.iteration}] response code is ${code}`,() => {",
+							"pm.test(`[code_${i}] Response code is ${code}`,() => {",
 							"    pm.response.to.have.status(code);",
 							"});",
 							"",
-							"pm.test(\"[json_${data.iteration}] response format is JSON\",() => {",
+							"pm.test(`[format_${i}] Response format is JSON`,() => {",
 							"    pm.response.to.have.header(\"Content-Type\");",
 							"    pm.response.to.be.json;",
-							"});"
+							"});",
+							"",
+							"if(data.expected.kind) {",
+							"    pm.test(`[kind_${i}] Response is an object with \"kind\" = ${data.expected.kind}`,() => {",
+							"        pm.expect(pm.response.json()).to.be.a('object');",
+							"        pm.expect(pm.response.json()).to.have.property('kind', data.expected.kind);",
+							"    });",
+							"}"
 						]
 					}
 				}
 			]
-		},
-		{
-			"name": "sandbox",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{endpoint}}/volumes?q=intitle:arcachon&startIndex=1990\"expected\": {\n            \"kind\" : \"books#volumes\"\n        }",
-					"host": [
-						"{{endpoint}}"
-					],
-					"path": [
-						"volumes"
-					],
-					"query": [
-						{
-							"key": "q",
-							"value": "intitle:arcachon"
-						},
-						{
-							"key": "startIndex",
-							"value": "1990\"expected\": {\n            \"kind\" : \"books"
-						}
-					],
-					"hash": "volumes\"\n        }"
-				}
-			},
-			"response": []
 		}
 	],
 	"auth": {
@@ -2356,6 +2355,26 @@
 		},
 		{
 			"key": "initialTotalItemsOfBookshelf",
+			"value": ""
+		},
+		{
+			"key": "ids",
+			"value": ""
+		},
+		{
+			"key": "bookId",
+			"value": ""
+		},
+		{
+			"key": "iteration",
+			"value": ""
+		},
+		{
+			"key": "titles",
+			"value": ""
+		},
+		{
+			"key": "bookTitle",
 			"value": ""
 		}
 	]

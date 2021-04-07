@@ -327,17 +327,7 @@
         "orderBy": "newest",
         "expected": 
         {
-            "kind": "books#volumes",
             "author": "minard"
-        }
-    },
-    {
-        "scenario": "S501b",
-        "iteration" : 1,
-        "expected": 
-        {
-            "kind": "books#volume",
-            "title": "Bacchantes"
         }
     },
     {
