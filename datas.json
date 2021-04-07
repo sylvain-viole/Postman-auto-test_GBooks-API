@@ -2,84 +2,98 @@
     {
         "scenario": "S001",
         "testCase": "C001",
-        "qData": "arcachon"
+        "qData": "arcachon",
+        "expected": {}
     },
     {
         "scenario": "S002",
         "testCase": "C001",
         "qScope": "intitle",
-        "qData": "arcachon"
+        "qData": "arcachon",
+        "expected": {}
     },
     {
         "scenario": "S002",
         "testCase": "C002",
         "qScope": "inauthor",
-        "qData": "arcachon"
+        "qData": "arcachon",
+        "expected": {}
     },    {
         "scenario": "S002",
         "testCase": "C003",
         "qScope": "isbn",
-        "qData": "9781428925168"
+        "qData": "9781428925168",
+        "expected": {}
     },
     {
         "scenario": "S003",
         "testCase": "C001",
         "qData": "balloon",
-        "orderBy" : "relevance"
+        "orderBy" : "relevance",
+        "expected": {}
     },
     {
         "scenario": "S003",
         "testCase": "C002",
         "qData": "balloon",
-        "orderBy" : "newest"
+        "orderBy" : "newest",
+        "expected": {}
     },
     {
         "scenario": "S004",
         "testCase": "C001",
         "qData": "arcachon",
-        "maxResults" : "20"
+        "maxResults" : "20",
+        "expected": {}
     },
     {
         "scenario": "S004",
         "testCase": "C001",
         "qData": "arcachon",
-        "maxResults" : "40"
+        "maxResults" : "40",
+        "expected": {}
     },
     {
         "scenario": "S004",
         "testCase": "C002",
         "qData": "arcachon",
-        "maxResults" : "0"
+        "maxResults" : "0",
+        "expected": {}
     },
     {
         "scenario": "S005",
         "testCase": "C001",
         "qData": "arcachon",
-        "startIndex" : "1"
+        "startIndex" : "1",
+        "expected": {}
     },
     {
         "scenario": "S006",
         "testCase": "C001",
         "qData": "arcachon",
-        "startIndex" : "1000000"
+        "startIndex" : "1000000",
+        "expected": {}
     },
     {
         "scenario": "S007",
         "testCase": "C001",
         "qData": "monsieur",
-        "langRestrict" : "fr"
+        "langRestrict" : "fr",
+        "expected": {}
     },
     {
         "scenario": "S007",
         "testCase": "C001",
         "qData": "mister",
-        "langRestrict" : "en"
+        "langRestrict" : "en",
+        "expected": {}
     },
     {
         "scenario": "S007",
         "testCase": "C001",
         "qData": "da",
-        "langRestrict" : "no"
+        "langRestrict" : "no",
+        "expected": {}
     },
     {
         "scenario": "S089",
@@ -89,6 +103,7 @@
         "value" : "xxx",
         "expected" : 
         {
+            "code" : 400,
             "msgPart" : "order_by"
         }
     },
@@ -100,6 +115,7 @@
         "value" : "xxx",
         "expected" : 
         {
+            "code" : 400,
             "msgPart" : "max_results"
         }
     },
@@ -111,6 +127,7 @@
         "value" : "xxx",
         "expected" : 
         {
+            "code" : 400,
             "msgPart" : "start_index"
         }
     },
@@ -141,12 +158,16 @@
     {
         "scenario": "S189",
         "testCase": "C001",
-        "bookId": "wrongId"
+        "bookId": "wrongId",
+        "expected": {
+            "code": 401
+        }
     },
     {
         "scenario": "S201",
         "testCase": "C001",
-        "bookshelfId": "1"
+        "bookshelfId": "1",
+        "expected": {}
     },
     {
         "scenario": "S202",
@@ -182,35 +203,49 @@
         "scenario": "S203",
         "testCase": "C001",
         "bookshelfId": "1001",
-        "bookId": "92_C6N0Kq_oC"
+        "bookId": "92_C6N0Kq_oC",
+        "expected": {}
     },
     {
         "scenario": "S204",
         "testCase": "C001",
         "bookshelfId": "1001",
-        "bookId": "92_C6N0Kq_oC"
+        "bookId": "92_C6N0Kq_oC",
+        "expected": {}
     },
     {
         "scenario": "S289",
         "testCase": "C001",
-        "bookshelfId": "1001"
+        "bookshelfId": "1001",
+        "expected": {
+            "code": 401
+        }
     },
     {
         "scenario": "S290",
         "testCase": "C001",
         "bookshelfId": "1001",
-        "key": "abc"
+        "key": "abc",
+        "expected": {
+            "code": 401
+        }
     },
     {
         "scenario": "S291",
         "testCase": "C001",
-        "bookshelfId": "abc"
+        "bookshelfId": "abc",
+        "expected": {
+            "code": 400
+        }
     },
     {
         "scenario": "S292",
         "testCase": "C001",
         "bookshelfId": "1",
-        "bookId": "92_C6N0Kq_oC"
+        "bookId": "92_C6N0Kq_oC",
+        "expected": {
+            "code": 403
+        }
     },
     {
         "scenario": "S501a",
