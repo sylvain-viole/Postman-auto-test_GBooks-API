@@ -1687,7 +1687,7 @@
 											"    pm.expect(pm.response.json().volumeInfo.title).to.eql(pm.collectionVariables.get('bookTitle'))",
 											"});",
 											"",
-											"pm.test(`[S501bC003_${i}] Response has <thumbnail> property which is an URL`,() => {",
+											"pm.test(`[S501bC003_${i}] Response has <thumbnail> property which is a valid URL`,() => {",
 											"    pm.expect(pm.response.json().volumeInfo).to.have.property('imageLinks');",
 											"    pm.expect(pm.response.json().volumeInfo.imageLinks).to.have.property('thumbnail');",
 											"    const imageUrl = pm.response.json().volumeInfo.imageLinks.thumbnail;",
@@ -1704,18 +1704,7 @@
 											"    const previewUrl = pm.response.json().volumeInfo.previewLink;",
 											"    pm.expect(previewUrl).to.be.a('string');",
 											"    pm.expect(previewUrl).to.satisfy(url => {return url.startsWith('http')});",
-											"        pm.sendRequest(previewUrl, (err, res) => {",
-											"        pm.expect(res.code).to.eql(200);",
-											"        pm.expect(res.headers.get('Content-Type')).includes('html')",
-											"    })",
-											"});",
-											"",
-											"pm.test(`[S201bC005_${i}] Response infoLink is valid and pointing to an html page`,() => {",
-											"    pm.expect(pm.response.json().volumeInfo).to.have.property('infoLink');",
-											"    const infoUrl = pm.response.json().volumeInfo.infoLink;",
-											"    pm.expect(infoUrl).to.be.a('string');",
-											"    pm.expect(infoUrl).to.satisfy(url => {return url.startsWith('http')});",
-											"        pm.sendRequest(infoUrl, (err, res) => {",
+											"    pm.sendRequest(previewUrl, (err, res) => {",
 											"        pm.expect(res.code).to.eql(200);",
 											"        pm.expect(res.headers.get('Content-Type')).includes('html')",
 											"    })",
@@ -1745,7 +1734,7 @@
 										"{{bookId}}"
 									]
 								},
-								"description": "### Test Scenario : [S502b] Pick one book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a book|\n|```AND```|The book is in a previous requested book list |\n|```THEN```|**I should get a valid response with a book and its informations** |\n\n\n### 3 test cases : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response ```ìd```matches the request | depends on [S501a] result count |\n| ```[C002]``` | Response ```title```is as expected | depends on [S501a] result count|\n| ```[C003]``` | Response has ```thumbnail```parameter that contains an url string,<br>request to this url returns a 200 code with \"image\" as content-type | depends on [S501a] result count |\n| ```[C004]``` | Response has ```previewLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | depends on [S501a] result count|\n| ```[C005]``` | Response has ```infoLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | depends on [S501a] result count |\n\n**Datas :**\n- ```bookId```= depends on [S501a] result id\n- ```bookTitle```= depends on [S501a] result title\n- ```bookshelfId```= 1001"
+								"description": "### Test Scenario : [S502b] Pick one book ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for a book|\n|```AND```|The book is in a previous requested book list |\n|```THEN```|**I should get a valid response with a book and its informations** |\n\n\n### 4 test cases : ###\n| [case] | Description | Iteration |\n|-|-|-|\n| ```[C001]``` | Response ```ìd```matches the request | depends on [S501a] result count |\n| ```[C002]``` | Response ```title```is as expected | depends on [S501a] result count|\n| ```[C003]``` | Response has ```thumbnail```parameter that contains an url string,<br>request to this url returns a 200 code with \"image\" as content-type | depends on [S501a] result count |\n| ```[C004]``` | Response has ```previewLink```parameter that contains an url string,<br>request to this url returns a 200 code with \"html\" as content-type | depends on [S501a] result count|\n\n**Datas :**\n- ```bookId```= depends on [S501a] result id\n- ```bookTitle```= depends on [S501a] result title\n- ```bookshelfId```= 1001"
 							},
 							"response": []
 						}
