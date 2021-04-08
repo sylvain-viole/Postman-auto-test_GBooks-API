@@ -19,7 +19,7 @@
 - install [htmlextra reporter](https://github.com/DannyDainton/newman-reporter-htmlextra),
 - run the following command line from your local folder :
 
-```newman run https://www.getpostman.com/collections/d17eab280931854df69a -d datas.json -e gbook_test.postman_environment.json -r htmlextra --reporter-htmlextra-title "Google Books Api Testing Report"```
+```newman run https://www.getpostman.com/collections/d17eab280931854df69a -d gbook_test.postman_datas.json -e gbook_test.postman_environment.json -r htmlextra --reporter-htmlextra-title "Google Books Api Testing Report"```
 
 - check html file created in the ```newman``` subdirectory
 
