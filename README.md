@@ -26,5 +26,5 @@
 - If you linked your local git repo to a remote one on GH , you can use ```bash launchTest.sh``` to automaticaly generate and push the report to your GH repo.
 
 ## Documentation:
-- You can find more info on the TEST STRATEGY on [test-plan.md](https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests/blob/main/test-plan.md).
+- You can find more context and technical info on the [presentation document (pdf)](https://github.com/sylvain-viole/Postman-auto-test_GBooks-API/blob/main/gbook_presentation.pdf).
 - All tests scenarios and cases are described in the COLLECTION documentation.
