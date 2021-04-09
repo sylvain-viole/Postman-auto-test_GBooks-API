@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "210b9cc8-0892-4ef3-829c-dc196ee46a64",
+		"_postman_id": "af09bd3c-bb35-4bbc-ad66-798a6a51d72d",
 		"name": "gbook_test",
 		"description": "## This collection challenges Google Books API ##\n\nComplete documentation of the API can be found [here](https://developers.google.com/books/docs/overview)\n\nThe API introduces 2 entities :\n- VOLUMES\n- BOOKSHELVES\n\n***\n\n### Collection structure ###\nCollection is separated in 2 parts :\n- **INTEGRATION TESTS :**\nChallenges atomic fonctionalities\n- **REGRESSION TESTS :**\nChallenges global use case scenario\n\n#### Auth : ####\n- For ```Volumes``` : none. \n- **For ```bookshelf``` OAuth 2.0 + API KEY**\n\n#### Test naming : ####\n- Each test is referred as ```[SxxxCyyy_i] <description>```\n    - ```Sxxx``` : is the id of the scenario from 0 to 999,\n    - ```Cyyy``` : is the id of the test Case from 0 to 999,\n    - ```_i```: is the current iteration,\n    - ```<description>``` : exposes what the test case challenges and expects\n    - example : ```[S101C002_2] Response object has all expected properties```\n\n- Test scenarios (gherkin) and cases details are exposed in each request documentation\n- Client consuming the API is referred to as ```client```\n- Google books API is referred to as ```service```\n\n#### Datas : ####\n- This collection uses an external data file.\n\n#### Routing : ####\nDispatch between data iteration requests, and tests cases works as follows :\n- ```Routing Req``` sets next request depending on the ```data.scenario``` value\n- ```switch``` statement on ```data.testCase``` in the test script of each request routes the iteration to its corresponding test case.\n- Each request after completion and tests throws back to the routing Req.\n\n***\n***",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -39,6 +39,9 @@
 									"        break;\r",
 									"    case \"S007\":\r",
 									"        postman.setNextRequest('[S007] langRestrict');\r",
+									"        break;\r",
+									"    case \"S011\":\r",
+									"        postman.setNextRequest('[S011a] Check constance');\r",
 									"        break;\r",
 									"    case \"S089\":\r",
 									"        postman.setNextRequest('[S089] Invalid Parameters');\r",
@@ -441,7 +444,7 @@
 														}
 													]
 												},
-												"description": "### Test Scenario : [S004] Valid request format with ```maxResults``` parameters ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```maxResults``` parameter is set with a valid value |\n|```THEN```|**I should get a valid response with a number of items matching accordingly** |\n\n\n### 2 test cases : ###\n\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has a count of at least ```maxResults``` items |2|\n\n**Datas** :\n- ```qData```=\"arcachon\", \"arcachon\"\n- ```maxResults```= 20, 40\n\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C002]``` | Response has 0 item | 1 |\n\n**Datas** :\n- ```qData```=\"arcachon\"\n- ```maxResults```= 0"
+												"description": "### Test Scenario : [S004] Valid request format with ```maxResults``` parameters ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|```maxResults``` parameter is set with a valid value |\n|```THEN```|**I should get a valid response with a number of items matching accordingly** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | Response has a count of at least ```maxResults``` items |2|\n\n**Datas** :\n- ```qData```=\"arcachon\", \"arcachon\"\n- ```maxResults```= 20, 40\n\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C002]``` | Response has 0 item | 1 |\n\n**Datas** :\n- ```qData```=\"arcachon\"\n- ```maxResults```= 0"
 											},
 											"response": []
 										},
@@ -626,6 +629,131 @@
 										}
 									],
 									"description": "Challenges responses to requests with different parameters."
+								},
+								{
+									"name": "[S011] CONSTANCE",
+									"item": [
+										{
+											"name": "[S011a] Check constance",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.collectionVariables.set('[S011]response', pm.response.json())"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qScope}}:{{qData}}&maxResults={{maxResults}}&langRestrict={{lang}}&orderBy={{orderBy}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qScope}}:{{qData}}"
+														},
+														{
+															"key": "maxResults",
+															"value": "{{maxResults}}"
+														},
+														{
+															"key": "langRestrict",
+															"value": "{{lang}}"
+														},
+														{
+															"key": "orderBy",
+															"value": "{{orderBy}}"
+														}
+													]
+												},
+												"description": "First Req, test are on the next request."
+											},
+											"response": []
+										},
+										{
+											"name": "[S011b] Check constance",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"if(data.scenario === \"S011\") {",
+															"    postman.setNextRequest(null)",
+															"}",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.test(`[S011bC001] 2 identical requests outputs same response`, () => {",
+															"    const resA = pm.collectionVariables.get('[S011]response');",
+															"    const resB = pm.response.json()",
+															"    pm.expect(resA).to.eql(resB);",
+															"})"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{endpoint}}/volumes?q={{qScope}}:{{qData}}&maxResults={{maxResults}}&langRestrict={{lang}}&orderBy={{orderBy}}",
+													"host": [
+														"{{endpoint}}"
+													],
+													"path": [
+														"volumes"
+													],
+													"query": [
+														{
+															"key": "q",
+															"value": "{{qScope}}:{{qData}}"
+														},
+														{
+															"key": "maxResults",
+															"value": "{{maxResults}}"
+														},
+														{
+															"key": "langRestrict",
+															"value": "{{lang}}"
+														},
+														{
+															"key": "orderBy",
+															"value": "{{orderBy}}"
+														}
+													]
+												},
+												"description": "### Test Scenario : 2 identical requests outputs same response ###\n\n|Verb|Description|\n|-:|:-|\n|```GIVEN```|The Client |\n|```WHEN```|I request the service for books with valid endpoint |\n|```AND```|I already made this request|\n|```THEN```|**I should get a response deeply identical to the last one** |\n\n\n### 1 test case : ###\n\n| [case] | Description | Iteration |\n|:-|:-|:-|\n| ```[C001]``` | 2 identical requests outputs same response| 1 |\n\n### Datas : \n- ```qScope``` = \"inauthor\"\n- ```qData``` = \"Tolkien\"\n- ```maxResults``` = \"2\"\n- ```lang``` = \"fr\"\n- ```orderBy``` = \"newest\""
+											},
+											"response": []
+										}
+									],
+									"description": "Challenges wether 2 responses to the same request outputs the same result"
 								},
 								{
 									"name": "[S089] Error Res",
@@ -2245,6 +2373,15 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "{{endpoint}}/volumes/?voiture",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -2329,32 +2466,44 @@
 	],
 	"variable": [
 		{
+			"id": "5515ed76-2424-46d5-a898-e8acf50cd5d8",
 			"key": "endpoint",
 			"value": "https://www.googleapis.com/books/v1"
 		},
 		{
+			"id": "565784b0-9e95-4a6c-b5b5-a87873a5da49",
 			"key": "initialTotalItemsOfBookshelf",
 			"value": ""
 		},
 		{
+			"id": "952cab95-780a-424c-b553-905c06a7c5cc",
 			"key": "ids",
 			"value": ""
 		},
 		{
+			"id": "cb885096-0d53-40b6-b1c6-1e1a901b8f82",
 			"key": "bookId",
 			"value": ""
 		},
 		{
+			"id": "11a1aaed-88f1-403c-95ea-f7a542c36cb2",
 			"key": "titles",
 			"value": ""
 		},
 		{
+			"id": "ec2ad4d5-e3bf-4e20-ab80-84b93c4e2b18",
 			"key": "bookTitle",
 			"value": ""
 		},
 		{
+			"id": "542955a6-720b-4234-b21e-0fdde3b67732",
 			"key": "checkKind",
 			"value": "true"
+		},
+		{
+			"id": "9e5d126f-e9f7-47b0-935c-354d24121abe",
+			"key": "[S011]response",
+			"value": ""
 		}
 	]
 }
