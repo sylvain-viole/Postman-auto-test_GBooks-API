@@ -23,7 +23,7 @@
 
 - check html file created in the ```newman``` subdirectory
 
-- If you linked your local git repo to a remote one on GH , you can use ```bash launchTest.sh``` to automaticaly generate and push the report to your GH repo.
+- An automated script ```launchTest.sh``` launches test and send report to dedicated discord server.
 
 ## Documentation:
 - You can find more context and technical info on the [presentation document (pdf)](https://github.com/sylvain-viole/Postman-auto-test_GBooks-API/blob/main/gbook_presentation.pdf).
