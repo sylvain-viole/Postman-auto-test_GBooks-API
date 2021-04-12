@@ -1,4 +1,5 @@
 gbook_test.postman_environment.json
+/node_modules
 /reports
 /.vscode
 .DS_Store

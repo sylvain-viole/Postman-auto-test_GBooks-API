@@ -1,0 +1,23 @@
+{
+  "name": "wcs_projet-1_google-books-api-tests",
+  "version": "1.0.0",
+  "description": "### This repo hosts a test package (documentation and scripts) for the google books API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests/issues"
+  },
+  "homepage": "https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests#readme",
+  "dependencies": {
+    "newman": "^5.2.2"
+  }
+}
