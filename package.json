@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests/issues"
   },
-  "homepage": "https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests#readme"
+  "homepage": "https://github.com/sylvain-viole/wcs_projet-1_google-books-api-tests#readme",
+  "dependencies": {
+    "newman": "^5.2.2"
+  }
 }
