@@ -11,4 +11,4 @@ before_script:
 - node_modules/.bin/newman --version
 
 script:
-- node_modules/.bin/newman run gbook_test.postman_collection.json --env-var "apiKey=$APIKEY, dynamicToken=$TOKEN" -d gbook_test.postman_datas.json
+- node_modules/.bin/newman run gbook_test.postman_collection.json --env-var "apiKey=$APIKEY,dynamicToken=$TOKEN" -d gbook_test.postman_datas.json
