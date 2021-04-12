@@ -4,7 +4,6 @@ node_js:
 
 install:
 - npm install newman
-- npm install newman-reporter-htmlextra
 
 before_script:
 - node --version
