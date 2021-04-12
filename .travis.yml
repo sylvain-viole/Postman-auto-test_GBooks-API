@@ -11,4 +11,4 @@ before_script:
 - node_modules/.bin/newman --version
 
 script:
-- node_modules/.bin/newman run gbook_test.postman_collection.json --env-var "apiKey=AIzaSyBZqLcuZjc-md5f55yCg1HPhsEwXYUaKKc" --env-var "dynamicToken=ya29.a0AfH6SMBtDDsnV-Yv1nTHwkuu5LW7pfvWbc0LREPpNyAtWBrqI-jmnz38vuvVomxke17_8qyiMrEW9lwdy0zZOf8RJjn_O0VJbnfZq6LeDb3DgUQT4a-qNaYqiKnoSBNlcoKnvn211-byj68ixPnQTzcWX-dzLg" -d gbook_test.postman_datas.json
+- node_modules/.bin/newman run gbook_test.postman_collection.json --env-var "apiKey=AIzaSyBZqLcuZjc\-md5f55yCg1HPhsEwXYUaKKc" --env-var "dynamicToken=ya29\.a0AfH6SMBtDDsnV\-Yv1nTHwkuu5LW7pfvWbc0LREPpNyAtWBrqI\-jmnz38vuvVomxke17\_8qyiMrEW9lwdy0zZOf8RJjn\_O0VJbnfZq6LeDb3DgUQT4a\-qNaYqiKnoSBNlcoKnvn211\-byj68ixPnQTzcWX\-dzLg" -d gbook_test.postman_datas.json
