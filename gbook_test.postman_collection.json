@@ -2457,42 +2457,42 @@
 	],
 	"variable": [
 		{
-			"id": "2f78599f-b751-45c9-998e-d518c9b1ef23",
+			"id": "dd6646c2-ac63-4b69-8817-60eb28f16f48",
 			"key": "endpoint",
 			"value": "https://www.googleapis.com/books/v1"
 		},
 		{
-			"id": "eb4976f2-0386-45a6-8c7f-77c529213a1a",
+			"id": "431b4ca6-9b5b-4405-9f0d-35facac97683",
 			"key": "initialTotalItemsOfBookshelf",
 			"value": ""
 		},
 		{
-			"id": "4febbdc3-bda5-4b26-8d9c-a7fd0f32686f",
+			"id": "ac7c40cf-f644-4b40-9ed7-31dce2143895",
 			"key": "ids",
 			"value": ""
 		},
 		{
-			"id": "c3b14a89-090a-4b94-bcd4-6fb386abc694",
+			"id": "d8c121ea-3c4a-4ad3-b70d-1b3aa08542e8",
 			"key": "bookId",
 			"value": ""
 		},
 		{
-			"id": "61fe7cc8-8d6f-4133-b281-10271264bb43",
+			"id": "dcb82dbb-742a-4f3f-97e8-e6a8855e24ef",
 			"key": "titles",
 			"value": ""
 		},
 		{
-			"id": "fb35f658-fd27-4e49-be42-5eab9182559a",
+			"id": "03a843dd-5d18-4539-8763-1e069c492c3b",
 			"key": "bookTitle",
 			"value": ""
 		},
 		{
-			"id": "c1d50eb9-a536-43d0-8e83-b5de2179ee44",
+			"id": "5872a5cd-3e38-4190-8649-a2f3ce96bcb0",
 			"key": "checkKind",
 			"value": "true"
 		},
 		{
-			"id": "9b8d2275-8551-402b-b5c7-79fd99363dd4",
+			"id": "56eb169a-5720-437c-a0da-05c65ee63c0d",
 			"key": "[S011]response",
 			"value": ""
 		}
